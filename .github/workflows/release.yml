@@ -1,0 +1,82 @@
+# Release workflow: on a version tag (v*) build the Windows installer (.exe) and the source ZIP on a
+# GitHub-hosted runner and attach both to the GitHub release.
+#
+# Code signing (SignPath Foundation) is PLANNED, not active. The step "Sign installer with SignPath" below is
+# disabled. To enable it after the SignPath application is approved (see Progetto/signpath.md):
+#   1. add the repository secret SIGNPATH_API_TOKEN (Settings > Secrets and variables > Actions)
+#   2. replace the three <...> values with the ones SignPath gives you
+#   3. change `if: ${{ false }}` to `if: ${{ true }}` (or delete the line)
+# Nothing else changes: the signed installer overwrites dist/VoxClarity-Setup-<ver>.exe before it is released.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write    # create the release and upload assets
+  actions: read      # needed by the SignPath connector (origin verification)
+
+jobs:
+  build:
+    runs-on: windows-latest   # GitHub-hosted: required for SignPath origin verification
+    steps:
+      - name: Check out (tag)
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803  # v6
+
+      - name: Read versions (tag must match engine.py)
+        shell: bash
+        run: |
+          ver="${GITHUB_REF_NAME#v}"
+          code=$(sed -n 's/^VERSION = "\(.*\)"/\1/p' engine.py)
+          if [ "$ver" != "$code" ]; then echo "Tag $GITHUB_REF_NAME does not match engine.py VERSION $code"; exit 1; fi
+          echo "VER=$ver" >> "$GITHUB_ENV"
+
+      - name: Install Inno Setup (pinned)
+        shell: pwsh
+        run: choco install innosetup --version 6.7.1 --no-progress -y
+
+      - name: Build source ZIP and installer
+        shell: bash
+        run: |
+          mkdir -p dist build/stage
+          git archive --format=zip --prefix=VoxClarity/ -o "dist/VoxClarity-$VER.zip" HEAD
+          git archive HEAD | tar -x -C build/stage
+          "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" "//DAppVersion=$VER" "//DStageDir=$(cygpath -w "$PWD/build/stage")" installer/VoxClarity.iss
+          mv "installer/Output/VoxClarity-Setup-$VER.exe" dist/
+
+      # ---- Code signing with SignPath: DISABLED until the application is approved ----
+      - name: Upload unsigned installer (input of the signing step)
+        if: ${{ false }}   # <- enable together with the next step
+        id: upload-unsigned
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
+        with:
+          name: unsigned-installer
+          path: dist/VoxClarity-Setup-${{ env.VER }}.exe
+
+      - name: Sign installer with SignPath
+        if: ${{ false }}   # <- change to true when SignPath has approved the project
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092  # v3.0
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: "<SignPath organization id>"
+          project-slug: "<SignPath project slug>"
+          signing-policy-slug: "<SignPath signing policy slug, e.g. release-signing>"
+          github-artifact-id: ${{ steps.upload-unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: dist   # signed .exe replaces the unsigned one
+      # ---------------------------------------------------------------------------------
+
+      - name: Publish release assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Release notes = the matching section of CHANGELOG.md
+          awk -v v="$VER" '/^## /{p = ($2 == v)} p' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "VoxClarity $VER" > notes.md
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/* --title "VoxClarity $VER" --notes-file notes.md --verify-tag
+          fi

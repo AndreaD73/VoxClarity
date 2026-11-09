@@ -11,3 +11,5 @@ config.json
 *.weba
 *.mp4
 *.lnk
+build/
+installer/Output/

@@ -42,6 +42,11 @@ no standard).
 
 ## Installation (3 steps, no technical knowledge needed)
 
+> **Easier still:** download `VoxClarity-Setup-x.y.z.exe` from the
+> [Release page](https://github.com/AndreaD73/VoxClarity/releases/latest), double-click it and follow the
+> wizard (no administrator rights; uninstall from Windows Settings > Apps). The steps below use the ZIP
+> instead and give the same result.
+
 1. **Download** the ZIP `VoxClarity-x.y.z.zip` from the
    [Release page](https://github.com/AndreaD73/VoxClarity/releases/latest) (section "Assets").
 2. **Extract** it to a folder (right-click the ZIP > **Extract all**). Choose a normal folder such as
@@ -55,7 +60,7 @@ no standard).
 > This is Microsoft Defender SmartScreen. It appears because the program is new and not yet
 > digitally signed, not because something was found in it. Click **More info**, then **Run anyway**.
 > Your browser may also say that the file "is not commonly downloaded": choose **Keep**.
-> Code signing is planned for a future release; until then these warnings are expected.
+> Code signing is planned (see the [code signing policy](CODE_SIGNING.md)); until then these warnings are expected.
 
 On the **first start** the AI models (~1 GB) are downloaded: the status bar says "Preparing the
 models..." and then "Ready". Start the program afterwards with the desktop icon.

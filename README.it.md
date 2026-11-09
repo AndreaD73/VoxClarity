@@ -42,6 +42,11 @@ allo standard scelto (YouTube, podcast o livello neutro, senza standard).
 
 ## Installazione (3 passi, senza conoscenze tecniche)
 
+> **Ancora piu' semplice:** scarica `VoxClarity-Setup-x.y.z.exe` dalla
+> [pagina Release](https://github.com/AndreaD73/VoxClarity/releases/latest), fai doppio clic e segui la
+> procedura guidata (senza diritti di amministratore; si disinstalla da Impostazioni di Windows > App).
+> I passi qui sotto usano invece lo ZIP e danno lo stesso risultato.
+
 1. **Scarica** lo ZIP `VoxClarity-x.y.z.zip` dalla
    [pagina Release](https://github.com/AndreaD73/VoxClarity/releases/latest) (sezione "Assets").
 2. **Estrailo** in una cartella (clic destro sullo ZIP > **Estrai tutto**). Scegli una cartella
@@ -55,8 +60,8 @@ allo standard scelto (YouTube, podcast o livello neutro, senza standard).
 > E' Microsoft Defender SmartScreen. Compare perche' il programma e' nuovo e non ancora firmato
 > digitalmente, non perche' sia stato trovato qualcosa di sospetto. Clicca **Ulteriori informazioni**
 > e poi **Esegui comunque**. Anche il browser puo' dire che il file "non viene scaricato di
-> frequente": scegli **Mantieni**. La firma del codice e' prevista in una versione futura; fino ad
-> allora questi avvisi sono normali.
+> frequente": scegli **Mantieni**. La firma del codice e' prevista (vedi la [politica di firma del codice](CODE_SIGNING.md), in inglese);
+> fino ad allora questi avvisi sono normali.
 
 Al **primo avvio** i modelli AI (~1 GB) vengono scaricati: la barra di stato dice "Preparo i
 modelli..." e poi "Pronto". Poi avvia il programma con l'icona sul desktop.

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.6 - Windows installer (.exe)
+
+- New `VoxClarity-Setup-<version>.exe`: a normal Windows installer. Per-user (no administrator rights),
+  installs into `%LOCALAPPDATA%\Programs\VoxClarity`, runs the same `install.ps1` as `Installa.bat` in a
+  visible window, creates Start-menu and desktop shortcuts. Languages: English and Italian.
+- Uninstaller (Settings > Apps) also removes the `.venv` and `ffmpeg` folders; it asks before deleting your
+  settings and logs (default: keep).
+- The ZIP with `Installa.bat` remains available as the alternative.
+- Both files are now built by GitHub Actions from the tagged source (`.github/workflows/release.yml`).
+- New `CODE_SIGNING.md` (code signing policy and privacy statement); code signing is planned.
+
 ## 0.4.5 - Double-click installation
 
 - New `Installa.bat`: double-click installer for non-technical users (runs `install.ps1`, keeps the window
