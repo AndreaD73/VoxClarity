@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.3 - Renamed to VoxClarity
+
+- The product is now called VoxClarity (previous name withdrawn). Settings and logs now live in `%APPDATA%\VoxClarity`,
+  work files and the browser profile in `%LOCALAPPDATA%\VoxClarity`, outputs default to `Documents\VoxClarity`.
+
 ## 0.4.2 - fixes from the pre-publication review
 
 Security
@@ -34,7 +39,7 @@ Interface and documents
   GCC runtime with GCC-exception-3.1, Intel OpenMP, MSVC runtime), Sidon copyright line, ffmpeg source
   pointers; duplicate NumPy row removed.
 - Log rotation: the last 10 daily files are kept.
-- `install.ps1` creates `VoceStudio.lnk` using `icon.ico`; `docs/screenshots/.gitkeep` added.
+- `install.ps1` creates `VoxClarity.lnk` using `icon.ico`; `docs/screenshots/.gitkeep` added.
 
 ## 0.4.1 - first public release
 
@@ -50,8 +55,8 @@ First version published as open source (MIT).
 - About panel: version, licences, "Check for updates" (GitHub releases) and "Report a problem"
   (pre-filled GitHub issue).
 - `install.ps1` creates a local `.venv`, installs pinned packages and an LGPL ffmpeg build; no
-  administrator rights. Settings and logs live in `%APPDATA%\VoceStudio`, work files in
-  `%LOCALAPPDATA%\VoceStudio`. The AI models download from Hugging Face on first run.
+  administrator rights. Settings and logs live in `%APPDATA%\VoxClarity`, work files in
+  `%LOCALAPPDATA%\VoxClarity`. The AI models download from Hugging Face on first run.
 - The window fits the content and ends just below the Process button; its height is remembered.
 
 (0.4.0 was the last internal build before publication.)

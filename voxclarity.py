@@ -1,6 +1,6 @@
-"""VoceStudio CLI: same engine as the window app.
+"""VoxClarity CLI: same engine as the window app.
 
-Usage: python vocestudio.py <input audio or video> [-o output] [--preset warm_pro|studio|natural|podcast|radio]
+Usage: python voxclarity.py <input audio or video> [-o output] [--preset warm_pro|studio|natural|podcast|radio]
        [--target youtube|podcast|none] [--device cuda:0]
 """
 import argparse
@@ -13,7 +13,7 @@ import engine  # noqa: E402
 
 
 def main():
-    ap = argparse.ArgumentParser(description=f"VoceStudio {engine.VERSION}")
+    ap = argparse.ArgumentParser(description=f"VoxClarity {engine.VERSION}")
     ap.add_argument("input")
     ap.add_argument("-o", "--output")
     ap.add_argument("--preset", choices=list(engine.PRESETS), default="warm_pro")
@@ -24,10 +24,10 @@ def main():
     t0 = time.time()
     x = engine.read_audio(a.input)
     dev = engine.pick_device(a.device)
-    print(f"[VoceStudio {engine.VERSION}] {len(x) / engine.SR:.0f} s on {dev}", flush=True)
+    print(f"[VoxClarity {engine.VERSION}] {len(x) / engine.SR:.0f} s on {dev}", flush=True)
     y, _ = engine.process(x, {}, a.preset, a.target, dev)
     engine.write_output(a.input, y, out)
-    print(f"[VoceStudio {engine.VERSION}] DONE in {time.time() - t0:.1f} s -> {out}", flush=True)
+    print(f"[VoxClarity {engine.VERSION}] DONE in {time.time() - t0:.1f} s -> {out}", flush=True)
 
 
 if __name__ == "__main__":

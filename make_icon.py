@@ -1,4 +1,4 @@
-"""Draw the VoceStudio icon (icon.ico) and write the matching icon.svg."""
+"""Draw the VoxClarity icon (icon.ico) and write the matching icon.svg."""
 from pathlib import Path
 from PIL import Image, ImageDraw
 

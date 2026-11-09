@@ -1,4 +1,4 @@
-# VoceStudio
+# VoxClarity
 
 [English version](README.en.md)
 
@@ -9,7 +9,7 @@ microfono), premi **Elabora**, ascolti l'originale e il risultato uno accanto al
 Il motore e' [Sidon](https://github.com/sarulab-speech/Sidon) (Sarulab, Universita' di Tokyo, licenza MIT):
 un modello che rigenera la voce da zero a partire da quella registrata. Essendo una risintesi, il
 risultato e' vicino all'originale ma non identico: ascolta sempre il confronto prima di usarlo.
-Dopo la rigenerazione VoceStudio applica un "suono" a scelta (Caldo pro, Studio caldo, Naturale,
+Dopo la rigenerazione VoxClarity applica un "suono" a scelta (Caldo pro, Studio caldo, Naturale,
 Podcast, Radio), cinque cursori (calore, presenza, aria, compattezza, intensita') e porta il volume
 allo standard scelto (YouTube, podcast o livello neutro, senza standard).
 
@@ -17,7 +17,7 @@ allo standard scelto (YouTube, podcast o livello neutro, senza standard).
 ## Cosa serve (limiti onesti)
 
 - **Windows 10 o 11, 64 bit.** Non e' stato provato su altri sistemi.
-- **Una scheda video NVIDIA con driver 570 o piu' recente.** VoceStudio supporta **solo CUDA
+- **Una scheda video NVIDIA con driver 570 o piu' recente.** VoxClarity supporta **solo CUDA
   (NVIDIA)**: i modelli sono compilati per CUDA e il programma non ha altre vie di calcolo. Senza
   scheda NVIDIA il programma si apre, ma la barra di stato segnala che i modelli non sono stati
   caricati e l'elaborazione termina con l'errore "no CUDA device found".
@@ -40,7 +40,7 @@ allo standard scelto (YouTube, podcast o livello neutro, senza standard).
 
 ## Installazione
 
-1. Scarica o clona questa cartella (ad esempio in `C:\Programmi-miei\VoceStudio`; evita cartelle
+1. Scarica o clona questa cartella (ad esempio in `C:\Programmi-miei\VoxClarity`; evita cartelle
    protette come `C:\Program Files`).
 2. Apri PowerShell nella cartella ed esegui, senza diritti di amministratore:
 
@@ -53,7 +53,7 @@ allo standard scelto (YouTube, podcast o livello neutro, senza standard).
    `https://download.pytorch.org/whl/cu128`, file `requirements-torch.txt`), poi tutto il resto solo da
    PyPI (`requirements.txt`). Le versioni sono esatte e ogni file e' verificato con il suo hash
    SHA-256 (`--require-hashes`): se un file non corrisponde, pip si ferma. Poi scarica ffmpeg e crea
-   il collegamento `VoceStudio.lnk` con l'icona del programma.
+   il collegamento `VoxClarity.lnk` con l'icona del programma.
 3. **ffmpeg:** `install.ps1` scarica una build **LGPL** (non GPL) di una release **datata e fissa**
    (`autobuild-2026-11-08-12-35`) del progetto BtbN FFmpeg-Builds
    (<https://github.com/BtbN/FFmpeg-Builds>) nella cartella `ffmpeg`, **verifica il suo SHA-256**
@@ -62,14 +62,14 @@ allo standard scelto (YouTube, podcast o livello neutro, senza standard).
    download o la verifica falliscono (le release datate di BtbN restano online per un tempo limitato)
    usa un ffmpeg gia' presente nel PATH; se non c'e' ti dice cosa installare
    (`winget install Gyan.FFmpeg`).
-4. Avvia con un doppio clic su **`VoceStudio.lnk`** o **`VoceStudio.vbs`** (senza finestra nera;
-   `VoceStudio.bat` mostra la console per la diagnostica). Al **primo avvio** i modelli vengono
+4. Avvia con un doppio clic su **`VoxClarity.lnk`** o **`VoxClarity.vbs`** (senza finestra nera;
+   `VoxClarity.bat` mostra la console per la diagnostica). Al **primo avvio** i modelli vengono
    scaricati (~1 GB): la barra di stato dice "Preparo i modelli..." e poi "Pronto".
 
-Puoi anche trascinare un file sopra `VoceStudio.vbs` per aprirlo gia' selezionato, oppure usare la riga di comando:
+Puoi anche trascinare un file sopra `VoxClarity.vbs` per aprirlo gia' selezionato, oppure usare la riga di comando:
 
 ```powershell
-.venv\Scripts\python vocestudio.py registrazione.wav --preset warm_pro --target youtube
+.venv\Scripts\python voxclarity.py registrazione.wav --preset warm_pro --target youtube
 ```
 
 ## Uso
@@ -79,13 +79,13 @@ Puoi anche trascinare un file sopra `VoceStudio.vbs` per aprirlo gia' selezionat
    4 GB ciascuno; per file piu' grandi usa la scelta del file (clic sul riquadro).
 2. **Parametri:** scegli suono, volume finale e cursori. Puoi salvare i settaggi con un nome.
 3. **Elabora.** Le uscite compaiono nella lista a destra (cartella predefinita
-   `Documenti\VoceStudio`, la cartella Documenti vera di Windows, anche se spostata; modificabile).
+   `Documenti\VoxClarity`, la cartella Documenti vera di Windows, anche se spostata; modificabile).
    L'A/B **Originale / Studio** si ascolta con la barra spaziatrice. I file video mantengono
    l'immagine, cambia solo l'audio.
 4. Il pulsante **Info** mostra versione, licenze, "Cerca aggiornamenti" e "Segnala un problema".
 
 **Microfono, la prima volta:** la finestra usa un suo profilo del browser
-(`%LOCALAPPDATA%\VoceStudio\browser`) e un indirizzo locale fisso (porta 47811, o un'altra libera se
+(`%LOCALAPPDATA%\VoxClarity\browser`) e un indirizzo locale fisso (porta 47811, o un'altra libera se
 e' occupata). Premendo **Registra** per la prima volta il browser ti chiede il permesso di usare il
 microfono: rispondi "Consenti" e il permesso viene ricordato. Finche' non l'hai dato, l'elenco mostra
 solo "Microfono predefinito" (il browser nasconde i nomi dei dispositivi); dopo la prima registrazione
@@ -95,14 +95,14 @@ compaiono tutti i microfoni.
 
 | Cosa | Dove |
 |---|---|
-| Impostazioni (`config.json`, `settings.json`) e log | `%APPDATA%\VoceStudio` |
-| File di lavoro (anteprime, registrazioni, caricamenti) | `%LOCALAPPDATA%\VoceStudio` |
-| Profilo del browser della finestra (permesso microfono) | `%LOCALAPPDATA%\VoceStudio\browser` |
-| Risultati | `Documenti\VoceStudio` (o la cartella scelta) |
+| Impostazioni (`config.json`, `settings.json`) e log | `%APPDATA%\VoxClarity` |
+| File di lavoro (anteprime, registrazioni, caricamenti) | `%LOCALAPPDATA%\VoxClarity` |
+| Profilo del browser della finestra (permesso microfono) | `%LOCALAPPDATA%\VoxClarity\browser` |
+| Risultati | `Documenti\VoxClarity` (o la cartella scelta) |
 | Modelli | cache di Hugging Face, `%USERPROFILE%\.cache\huggingface` |
 
 I dati dell'utente vanno in AppData. Nella cartella di installazione ci sono solo i file del
-programma piu' `.venv`, `ffmpeg`, `VoceStudio.lnk` e le cartelle `__pycache__` che Python crea da solo.
+programma piu' `.venv`, `ffmpeg`, `VoxClarity.lnk` e le cartelle `__pycache__` che Python crea da solo.
 
 ## Prestazioni
 
@@ -131,7 +131,7 @@ versione quando lo premi tu.
 Il **microfono** viene aperto solo mentre registri, dopo la richiesta di permesso del browser, e
 si chiude quando premi Ferma.
 
-Il **log** (`%APPDATA%\VoceStudio\logs`, gli ultimi 10 file giornalieri) contiene i **nomi dei file
+Il **log** (`%APPDATA%\VoxClarity\logs`, gli ultimi 10 file giornalieri) contiene i **nomi dei file
 elaborati e i percorsi delle cartelle**, che possono includere il tuo nome utente di Windows; non
 contiene il contenuto dei file.
 
@@ -141,7 +141,7 @@ letto e dopo aver tolto cio' che non vuoi condividere.
 
 ## Uso responsabile
 
-VoceStudio serve a **migliorare le tue registrazioni**: la voce resta quella registrata, rigenerata
+VoxClarity serve a **migliorare le tue registrazioni**: la voce resta quella registrata, rigenerata
 dal modello con lo stesso testo. **Non e' uno strumento di clonazione vocale** e non genera voci a
 partire da testo o da campioni di altre persone. Elabora solo registrazioni di cui hai i diritti e,
 se contengono altre persone, il loro consenso. Chi usa il programma e' responsabile del suo uso.

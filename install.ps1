@@ -1,4 +1,4 @@
-# VoceStudio installer (Windows PowerShell 5.1 or later, no administrator rights needed).
+# VoxClarity installer (Windows PowerShell 5.1 or later, no administrator rights needed).
 #
 #   powershell -ExecutionPolicy Bypass -File install.ps1
 #
@@ -13,7 +13,7 @@
 #   4. gets ffmpeg: a dated LGPL build of the BtbN FFmpeg-Builds project into .\ffmpeg, after
 #      checking its SHA-256 against the checksums BtbN published with that release
 #      (falls back to an ffmpeg already on PATH, or prints instructions)
-#   5. creates VoceStudio.lnk (a shortcut with the program icon) in this folder
+#   5. creates VoxClarity.lnk (a shortcut with the program icon) in this folder
 #
 # The AI model files (about 1 GB) are NOT downloaded here: the app downloads them from
 # Hugging Face the first time it starts.
@@ -33,9 +33,9 @@ $FfBase = "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-202
 $FfZip = "ffmpeg-n9.0.2-48-gd4070a14ce-win64-lgpl-shared-9.0.zip"
 $FfSha256 = "642ac7acf4060503cfdf8dfb5791900f8fd768d5a54c27f3efef78293f5f3bbf"
 
-function Say($m)  { Write-Host "[VoceStudio] $m" }
-function Warn($m) { Write-Host "[VoceStudio] WARNING: $m" -ForegroundColor Yellow }
-function Fail($m) { Write-Host "[VoceStudio] ERROR: $m" -ForegroundColor Red; exit 1 }
+function Say($m)  { Write-Host "[VoxClarity] $m" }
+function Warn($m) { Write-Host "[VoxClarity] WARNING: $m" -ForegroundColor Yellow }
+function Fail($m) { Write-Host "[VoxClarity] ERROR: $m" -ForegroundColor Red; exit 1 }
 
 # ---- 1. Python 3.12 ----------------------------------------------------------------------
 function Test-Py($exe, $extra) {
@@ -71,7 +71,7 @@ if ($gpu) {
     } catch { }
 } else {
     Warn "No NVIDIA GPU found (nvidia-smi is missing or reports no card)."
-    Warn "VoceStudio supports CUDA (NVIDIA) only: the app will start, but processing a file fails with 'no CUDA device found'."
+    Warn "VoxClarity supports CUDA (NVIDIA) only: the app will start, but processing a file fails with 'no CUDA device found'."
     Warn "If you do have an NVIDIA card, install the current driver from https://www.nvidia.com/drivers and run this script again."
 }
 
@@ -98,7 +98,7 @@ function Test-Lgpl($exe) {
     return ($cfg -match "configuration:") -and ($cfg -notmatch "--enable-gpl") -and ($cfg -notmatch "--enable-nonfree")
 }
 if (-not (Test-Path $ffExe) -and -not $NoFfmpegDownload) {
-    $tmp = Join-Path $env:TEMP ("vocestudio-ffmpeg-" + [guid]::NewGuid().ToString("N"))
+    $tmp = Join-Path $env:TEMP ("voxclarity-ffmpeg-" + [guid]::NewGuid().ToString("N"))
     New-Item -ItemType Directory -Path $tmp | Out-Null
     try {
         Say "Downloading ffmpeg ($FfZip, about 75 MB) ..."
@@ -131,7 +131,7 @@ if (-not (Test-Path $ffExe)) {
     if ($onPath) {
         Say ("Using the ffmpeg found on PATH: " + $onPath.Source + " (its licence depends on how that build was made).")
     } else {
-        Warn "No ffmpeg available. VoceStudio needs it to read audio/video files."
+        Warn "No ffmpeg available. VoxClarity needs it to read audio/video files."
         Warn "Either run this script again with an internet connection, or install ffmpeg yourself"
         Warn "(for example: winget install Gyan.FFmpeg) so that 'ffmpeg' works in a new PowerShell window."
     }
@@ -140,17 +140,17 @@ if (-not (Test-Path $ffExe)) {
 # ---- 5. shortcut with the program icon ---------------------------------------------------
 try {
     $sh = New-Object -ComObject WScript.Shell
-    $lnk = $sh.CreateShortcut((Join-Path $root "VoceStudio.lnk"))
+    $lnk = $sh.CreateShortcut((Join-Path $root "VoxClarity.lnk"))
     $lnk.TargetPath = Join-Path $env:WINDIR "System32\wscript.exe"
-    $lnk.Arguments = '"' + (Join-Path $root "VoceStudio.vbs") + '"'
+    $lnk.Arguments = '"' + (Join-Path $root "VoxClarity.vbs") + '"'
     $lnk.WorkingDirectory = $root
     $lnk.IconLocation = (Join-Path $root "icon.ico")
-    $lnk.Description = "VoceStudio"
+    $lnk.Description = "VoxClarity"
     $lnk.Save()
-    Say "Shortcut created: VoceStudio.lnk (copy it to your desktop if you like)."
+    Say "Shortcut created: VoxClarity.lnk (copy it to your desktop if you like)."
 } catch {
-    Warn ("Could not create the shortcut (" + $_.Exception.Message + "). Use VoceStudio.vbs directly.")
+    Warn ("Could not create the shortcut (" + $_.Exception.Message + "). Use VoxClarity.vbs directly.")
 }
 
-Say "Done. Start the program by double-clicking VoceStudio.lnk or VoceStudio.vbs."
+Say "Done. Start the program by double-clicking VoxClarity.lnk or VoxClarity.vbs."
 Say "First start: the AI models (about 1 GB) are downloaded from Hugging Face; wait for the status bar to say Ready."

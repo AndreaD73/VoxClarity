@@ -1,4 +1,4 @@
-"""VoceStudio engine: Sidon resynthesis + sound finishing + loudness. Importable, no CLI."""
+"""VoxClarity engine: Sidon resynthesis + sound finishing + loudness. Importable, no CLI."""
 import logging
 import os
 import re
@@ -19,8 +19,8 @@ import torch
 import torchaudio
 from scipy.signal import fftconvolve, firwin2
 
-VERSION = "0.4.2"
-REPO_URL = "https://github.com/AndreaD73/VoceStudio"
+VERSION = "0.4.3"
+REPO_URL = "https://github.com/AndreaD73/VoxClarity"
 CHUNK_S = 30
 SR = 48000
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v"}
@@ -30,7 +30,7 @@ W2V_REPO = "facebook/w2v-bert-2.0"
 REPO_REV = "b3b02d8bbd55fdbc410e6e46e76ef95ace4fbf52"
 W2V_REV = "da985ba0987f70aaeb84a80f2851cfac8c697a7b"
 APP_DIR = Path(__file__).resolve().parent
-LOG = logging.getLogger("vocestudio")
+LOG = logging.getLogger("voxclarity")
 NOWIN = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 

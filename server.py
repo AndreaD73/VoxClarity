@@ -1,4 +1,4 @@
-"""VoceStudio window app: local HTTP server + HTML UI shown as a browser app window.
+"""VoxClarity window app: local HTTP server + HTML UI shown as a browser app window.
 
 Run: python server.py [--no-window] [--port N] [file to preselect]
 
@@ -28,15 +28,15 @@ APP = Path(__file__).resolve().parent
 UI = APP / "ui"
 HOME = Path.home()
 # Settings and logs live in the roaming profile, heavy work files in the local profile.
-APPDATA_DIR = Path(os.environ.get("APPDATA") or HOME / "AppData" / "Roaming") / "VoceStudio"
+APPDATA_DIR = Path(os.environ.get("APPDATA") or HOME / "AppData" / "Roaming") / "VoxClarity"
 LOGDIR = APPDATA_DIR / "logs"
-WORK = Path(os.environ.get("LOCALAPPDATA") or HOME / "AppData" / "Local") / "VoceStudio" / "work"
+WORK = Path(os.environ.get("LOCALAPPDATA") or HOME / "AppData" / "Local") / "VoxClarity" / "work"
 for _d in (LOGDIR, WORK / "inbox"):
     _d.mkdir(parents=True, exist_ok=True)
 NOWIN = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 # pythonw has no stdout/stderr: send them to the log so nothing crashes silently.
-LOGFILE = LOGDIR / f"vocestudio_{datetime.now():%Y-%m-%d}.log"
+LOGFILE = LOGDIR / f"voxclarity_{datetime.now():%Y-%m-%d}.log"
 if sys.stdout is None or sys.stderr is None:
     sys.stdout = sys.stderr = open(LOGFILE, "a", encoding="utf-8", buffering=1)
 
@@ -44,13 +44,13 @@ import logging  # noqa: E402
 
 logging.basicConfig(filename=str(LOGFILE), level=logging.INFO, encoding="utf-8",
                     format="%(asctime)s %(levelname)s %(message)s")
-LOG = logging.getLogger("vocestudio")
+LOG = logging.getLogger("voxclarity")
 
 
 def _rotate_logs(keep=10):
     """Keep only the newest `keep` daily log files (names carry the date, so name order = age)."""
     try:
-        for f in sorted(LOGDIR.glob("vocestudio_*.log"))[:-keep]:
+        for f in sorted(LOGDIR.glob("voxclarity_*.log"))[:-keep]:
             f.unlink(missing_ok=True)
     except OSError:
         pass
@@ -75,7 +75,7 @@ def _choose_gpu():
         best = max(rows, key=lambda r: r[1] * (100 - r[2]) / 100)
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         os.environ["CUDA_VISIBLE_DEVICES"] = str(best[0])
-        os.environ["VOCESTUDIO_GPU_INFO"] = out.strip().replace("\n", " | ")
+        os.environ["VOXCLARITY_GPU_INFO"] = out.strip().replace("\n", " | ")
     except Exception:
         pass
 
@@ -113,12 +113,12 @@ def documents_dir():
     return HOME / "Documents"
 
 
-DROP_OUT = documents_dir() / "VoceStudio"
+DROP_OUT = documents_dir() / "VoxClarity"
 # Random secret of this run: given only to the window we open (in its URL), required on every API/media request.
 TOKEN = secrets.token_urlsafe(24)
 DEFAULT_PORT = 47811          # fixed default so the browser origin (and its microphone permission) stays the same
 MAX_UPLOAD = 4 * 2**30        # largest accepted upload (drag and drop / recording), in bytes
-BROWSER_PROFILE = Path(os.environ.get("LOCALAPPDATA") or HOME / "AppData" / "Local") / "VoceStudio" / "browser"
+BROWSER_PROFILE = Path(os.environ.get("LOCALAPPDATA") or HOME / "AppData" / "Local") / "VoxClarity" / "browser"
 CONFIG_FILE = APPDATA_DIR / "config.json"
 CONFIG_KEYS = {"winH", "lang", "outdir", "preset", "target", "params", "mic", "setName", "input"}
 
@@ -193,7 +193,7 @@ def sound_label(key):
 
 
 def out_dir():
-    """Configured output folder (default Documents\\VoceStudio)."""
+    """Configured output folder (default Documents\\VoxClarity)."""
     p = CONFIG.get("outdir")
     return Path(p) if p else DROP_OUT
 
@@ -435,7 +435,7 @@ def run_job(kind, body):
 def open_app_window(url):
     """Open the UI as a Chrome/Edge app window (no tabs); fall back to the default browser.
 
-    The window uses its own browser profile (%LOCALAPPDATA%\\VoceStudio\\browser) and a fixed local port, so
+    The window uses its own browser profile (%LOCALAPPDATA%\\VoxClarity\\browser) and a fixed local port, so
     the browser remembers the microphone permission you grant once. No permission prompt is bypassed.
     """
     rels = (Path("Google") / "Chrome" / "Application" / "chrome.exe",
@@ -472,7 +472,7 @@ def check_update():
     """
     api = engine.REPO_URL.replace("https://github.com/", "https://api.github.com/repos/") + "/releases/latest"
     req = urllib.request.Request(api, headers={"Accept": "application/vnd.github+json",
-                                               "User-Agent": f"VoceStudio/{engine.VERSION}"})
+                                               "User-Agent": f"VoxClarity/{engine.VERSION}"})
     try:
         with urllib.request.urlopen(req, timeout=10) as r:
             d = json.load(r)
@@ -501,9 +501,9 @@ def system_info():
 def report_url():
     """Pre-filled GitHub new-issue URL; contains only version, Windows version and GPU name."""
     s = system_info()
-    body = (f"**VoceStudio version:** {s['version']}\n**Windows:** {s['windows']}\n**GPU:** {s['gpu']}\n"
+    body = (f"**VoxClarity version:** {s['version']}\n**Windows:** {s['windows']}\n**GPU:** {s['gpu']}\n"
             f"**Python:** {s['python']}\n\n**What happened?**\n\n\n**What did you expect?**\n\n\n"
-            "**Log file:** please attach the newest file from `%APPDATA%\\VoceStudio\\logs`. "
+            "**Log file:** please attach the newest file from `%APPDATA%\\VoxClarity\\logs`. "
             "Check it first: it contains the names of the files you processed and folder paths, "
             "which may include your Windows user name.\n")
     q = urllib.parse.urlencode({"title": "Problem report", "body": body}, quote_via=urllib.parse.quote)
@@ -764,7 +764,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 import webbrowser
                 webbrowser.open(report_url())
                 subprocess.Popen(["explorer", f"/select,{LOGFILE}"])
-                return self._json({"ok": True, "info": system_info(), "logdir": "%APPDATA%\\VoceStudio\\logs"})
+                return self._json({"ok": True, "info": system_info(), "logdir": "%APPDATA%\\VoxClarity\\logs"})
             if url.path == "/api/settings/save":
                 name = (body.get("name") or "").strip()[:40]
                 if not name:
@@ -827,9 +827,9 @@ def main():
         save_config(CONFIG)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     url = f"http://127.0.0.1:{port}/?t={TOKEN}"
-    LOG.info("=== VoceStudio %s started on port %s (no_window=%s) ===", engine.VERSION, port, a.no_window)
+    LOG.info("=== VoxClarity %s started on port %s (no_window=%s) ===", engine.VERSION, port, a.no_window)
     LOG.info("GPUs (index, free MiB, %% load): %s -> chosen %s",
-             os.environ.get("VOCESTUDIO_GPU_INFO", "?"), os.environ.get("CUDA_VISIBLE_DEVICES", "?"))
+             os.environ.get("VOXCLARITY_GPU_INFO", "?"), os.environ.get("CUDA_VISIBLE_DEVICES", "?"))
 
     def warm_up():
         # Load the AI models while the user picks a file, so the first preview starts fast.

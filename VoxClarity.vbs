@@ -1,9 +1,9 @@
-' Launches VoceStudio without a console window (drop a file on this script to preselect it).
+' Launches VoxClarity without a console window (drop a file on this script to preselect it).
 Set sh = CreateObject("WScript.Shell")
 here = Left(WScript.ScriptFullName, InStrRev(WScript.ScriptFullName, "\") - 1)
 py = here & "\.venv\Scripts\pythonw.exe"
 If Not CreateObject("Scripting.FileSystemObject").FileExists(py) Then
-  MsgBox "VoceStudio is not installed yet. Run install.ps1 first (right-click > Run with PowerShell).", 48, "VoceStudio"
+  MsgBox "VoxClarity is not installed yet. Run install.ps1 first (right-click > Run with PowerShell).", 48, "VoxClarity"
   WScript.Quit 1
 End If
 cmd = """" & py & """ """ & here & "\server.py"""

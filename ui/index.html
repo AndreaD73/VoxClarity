@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>VoceStudio</title>
+<title>VoxClarity</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
@@ -90,7 +90,7 @@ button.danger{background:var(--bad);border-color:var(--bad);color:#fff}
 </head>
 <body>
 <header>
-  <img src="icon.svg" alt=""><h1>VoceStudio</h1>
+  <img src="icon.svg" alt=""><h1>VoxClarity</h1>
   <select id="lang" data-t="langTip"><option value="it">IT</option><option value="en">EN</option></select>
   <span class="ver" id="ver">v-</span>
   <button id="bAbout" class="ibtn" data-t="aboutTip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span data-i="about"></span></button>
@@ -157,7 +157,7 @@ button.danger{background:var(--bad);border-color:var(--bad);color:#fff}
   </div>
 </main>
 <div class="modal hide" id="aboutBox"><div class="card">
-  <h2>VoceStudio <span id="abVer"></span></h2>
+  <h2>VoxClarity <span id="abVer"></span></h2>
   <p class="small" data-i="abTag"></p>
   <p><span data-i="abLicense"></span></p>
   <p><span data-i="abRepo"></span> <a id="abRepoLink" target="_blank" rel="noopener"></a></p>
@@ -215,7 +215,7 @@ it:{
  micNA:"Microfono non disponibile: {err}",recStatus:"Sto registrando dal microfono: parla, poi premi Ferma",saving:"Salvo la registrazione...",
  recSaved:"Registrazione salvata e scelta come ingresso: imposta i parametri e premi Elabora",
  about:"Info",aboutTip:"Versione, licenze e aggiornamenti",abTag:"Migliora la voce di una registrazione con l'IA, tutto sul tuo computer.",
- abLicense:"VoceStudio è software libero con licenza MIT. Copyright (c) 2026 Andrea Dotta.",abRepo:"Pagina del progetto:",abThird:"Componenti di terzi",
+ abLicense:"VoxClarity è software libero con licenza MIT. Copyright (c) 2026 Andrea Dotta.",abRepo:"Pagina del progetto:",abThird:"Componenti di terzi",
  abAttr:"Sidon è stato addestrato su FLEURS-R (Google) e LibriTTS-R, entrambi con licenza CC BY 4.0: ne citiamo gli autori come richiesto. Elenco completo e link alle licenze in THIRD_PARTY_NOTICES.md.",
  abPrivacy:"Privacy: l'elaborazione è locale e nessun tuo file o dato viene inviato. Le uniche connessioni sono lo scarico dei modelli al primo avvio e i pulsanti qui sopra, che premi tu. Il microfono si apre solo mentre registri, dopo la richiesta di permesso del browser.",
  abCheck:"Cerca aggiornamenti",abReport:"Segnala un problema",abClose:"Chiudi",
@@ -256,7 +256,7 @@ en:{
  micNA:"Microphone not available: {err}",recStatus:"Recording from the microphone: speak, then press Stop",saving:"Saving the recording...",
  recSaved:"Recording saved and chosen as input: set the parameters and press Process",
  about:"About",aboutTip:"Version, licences and updates",abTag:"Improves the voice of a recording with AI, entirely on your computer.",
- abLicense:"VoceStudio is free software under the MIT licence. Copyright (c) 2026 Andrea Dotta.",abRepo:"Project page:",abThird:"Third-party components",
+ abLicense:"VoxClarity is free software under the MIT licence. Copyright (c) 2026 Andrea Dotta.",abRepo:"Project page:",abThird:"Third-party components",
  abAttr:"Sidon was trained on FLEURS-R (Google) and LibriTTS-R, both CC BY 4.0: their authors are credited as the licence requires. Full list and links to the licences in THIRD_PARTY_NOTICES.md.",
  abPrivacy:"Privacy: processing is local and none of your files or data is sent anywhere. The only connections are the model download on first run and the buttons above, which you press yourself. The microphone is opened only while you record, after the browser permission prompt.",
  abCheck:"Check for updates",abReport:"Report a problem",abClose:"Close",
@@ -350,7 +350,7 @@ $("lang").onchange=async()=>{LANG=$("lang").value;await post("/api/config",{lang
 async function init(){
   const [i,c]=await Promise.all([fetch("/api/info").then(r=>r.json()),fetch("/api/config").then(r=>r.json())]);
   const cfg=c.config;LANG=cfg.lang||"en";outDir=c.outdir;
-  $("ver").textContent="v"+i.version;REPO=i.repo;document.title="VoceStudio "+i.version;
+  $("ver").textContent="v"+i.version;REPO=i.repo;document.title="VoxClarity "+i.version;
   PRESETS=i.presets;TARGETS=i.targets;DEF=i.defaults;
   $("sliders").innerHTML=SLK.map(k=>`<div class="sl"><span id="sl_${k}"></span><input type="range" id="s_${k}" min="0" max="100" value="${DEF[k]}"><output id="o_${k}">${DEF[k]}</output></div>`).join("");
   for(const k of SLK)$("s_"+k).oninput=e=>{$("o_"+k).textContent=e.target.value;saveCfg()};
