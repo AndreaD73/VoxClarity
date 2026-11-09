@@ -1,157 +1,174 @@
 # VoxClarity
 
-[English version](README.en.md)
+[Italiano](README.it.md)
 
-Porta una registrazione fatta con un microfono economico a un suono da studio, usando l'intelligenza
-artificiale sulla scheda video del tuo computer. Trascini un file audio o video (oppure registri dal
-microfono), premi **Elabora**, ascolti l'originale e il risultato uno accanto all'altro.
+Turns a recording made with a cheap microphone into a studio-sounding one, using AI on your
+computer's graphics card. Drag in an audio or video file (or record from the microphone), press
+**Process**, and listen to the original and the result side by side.
 
-![VoxClarity: finestra principale](docs/screenshots/main-it.png)
+![VoxClarity: main window](docs/screenshots/main-en.png)
 
-Il motore e' [Sidon](https://github.com/sarulab-speech/Sidon) (Sarulab, Universita' di Tokyo, licenza MIT):
-un modello che rigenera la voce da zero a partire da quella registrata. Essendo una risintesi, il
-risultato e' vicino all'originale ma non identico: ascolta sempre il confronto prima di usarlo.
-Dopo la rigenerazione VoxClarity applica un "suono" a scelta (Caldo pro, Studio caldo, Naturale,
-Podcast, Radio), cinque cursori (calore, presenza, aria, compattezza, intensita') e porta il volume
-allo standard scelto (YouTube, podcast o livello neutro, senza standard).
+The engine is [Sidon](https://github.com/sarulab-speech/Sidon) (Sarulab, University of Tokyo, MIT
+licence): a model that regenerates the voice from scratch starting from the recorded one. Because it
+is a resynthesis, the result is close to the original but not identical: always listen to the
+comparison before using it. After regeneration VoxClarity applies a "sound" of your choice (Warm
+pro, Warm studio, Natural, Podcast, Radio), five sliders (warmth, presence, air, tightness,
+intensity) and brings the loudness to the chosen standard (YouTube, podcast, or a neutral level with
+no standard).
 
+## Requirements (honest limits)
 
-## Cosa serve (limiti onesti)
+- **Windows 10 or 11, 64-bit.** Not tested on other systems.
+- **An NVIDIA graphics card with driver 570 or newer.** VoxClarity supports **CUDA (NVIDIA) only**:
+  the models are CUDA builds and the program has no other compute path. Without an NVIDIA card the
+  program opens, but the status bar reports that the models could not be loaded and processing fails
+  with "no CUDA device found".
+  - **Supported cards:** from the Turing generation (GeForce RTX 20, GTX 16) up to Blackwell
+    (GeForce RTX 50), because PyTorch with CUDA 12.8 contains the kernels for these architectures.
+    Older cards (GTX 10, Titan V and earlier) are **not** supported by this version.
+  - **Video memory:** the file is processed in 30-second blocks. Measured (PyTorch 2.11, CUDA 12.8,
+    RTX 3080): a peak of **about 2.0 GB** of allocated video memory on a 30-second clip (one full
+    block) and about 1.4 GB on a 10-second preview; longer files do not raise the peak. With the
+    driver and the CUDA context in mind, use a card with **at least 4 GB** (tested only on 8-10 GB
+    cards).
+- **Python 3.12** (64-bit). `Installa.bat` installs it for you if it is missing (for your user only,
+  no administrator rights); other Python versions are not supported: the packages are pinned for 3.12.
+- **Disk space:** about **6 GB in total** (measured: `.venv` 4.7 GB, ffmpeg 0.2 GB, models 1.0 GB;
+  PyTorch with CUDA is large). The models are downloaded **on first start** from Hugging Face (`sarulab-speech/sidon-v0.1` and
+  `facebook/w2v-bert-2.0`, at fixed revisions; measured: 1.0 GB in total) into the normal Hugging
+  Face cache (`%USERPROFILE%\.cache\huggingface`). Internet is only needed for the installation and
+  this first download.
+- Google Chrome or Microsoft Edge for the window (otherwise your default browser opens).
 
-- **Windows 10 o 11, 64 bit.** Non e' stato provato su altri sistemi.
-- **Una scheda video NVIDIA con driver 570 o piu' recente.** VoxClarity supporta **solo CUDA
-  (NVIDIA)**: i modelli sono compilati per CUDA e il programma non ha altre vie di calcolo. Senza
-  scheda NVIDIA il programma si apre, ma la barra di stato segnala che i modelli non sono stati
-  caricati e l'elaborazione termina con l'errore "no CUDA device found".
-  - **Schede supportate:** dalla generazione Turing (GeForce RTX 20, GTX 16) fino a Blackwell
-    (GeForce RTX 50), perche' PyTorch con CUDA 12.8 contiene i kernel per queste architetture. Le
-    schede piu' vecchie (GTX 10, Titan V e precedenti) **non** sono supportate da questa versione.
-  - **Memoria video:** il file e' elaborato a blocchi di 30 secondi. Misurato (PyTorch 2.11, CUDA 12.8,
-    RTX 3080): picco di **circa 2,0 GB** di memoria video allocata su un clip di 30 secondi (un blocco
-    intero) e circa 1,4 GB su un'anteprima di 10 secondi; durate maggiori non aumentano il picco. Con
-    il driver e il contesto CUDA conviene una scheda con **almeno 4 GB** (provato solo su schede da
-    8-10 GB).
-- **Python 3.12** (64 bit, da <https://www.python.org/downloads/>). Altre versioni di Python non sono
-  supportate: i pacchetti sono fissati per la 3.12.
-- **Spazio su disco:** circa 5-6 GB per l'installazione (PyTorch con CUDA e' grande) piu' circa 1 GB di
-  modelli, scaricati **al primo avvio** da Hugging Face
-  (`sarulab-speech/sidon-v0.1` e `facebook/w2v-bert-2.0`, in una revisione precisa; misurato: 1,0 GB
-  in totale) e salvati nella cache normale di Hugging Face (`%USERPROFILE%\.cache\huggingface`).
-  Serve internet solo per l'installazione e per questo primo scaricamento.
-- Google Chrome o Microsoft Edge per la finestra (altrimenti si apre il browser predefinito).
+## Installation (3 steps, no technical knowledge needed)
 
-## Installazione
+1. **Download** the ZIP `VoxClarity-x.y.z.zip` from the
+   [Release page](https://github.com/AndreaD73/VoxClarity/releases/latest) (section "Assets").
+2. **Extract** it to a folder (right-click the ZIP > **Extract all**). Choose a normal folder such as
+   `C:\Tools` or your Documents; avoid protected ones like `C:\Program Files`.
+3. **Double-click `Installa.bat`** ("Install"). It does everything by itself, without administrator
+   rights: it installs Python 3.12 if it is missing, then the program and its components (a large
+   download, several GB: it can take a long time), and creates a **VoxClarity** icon on your desktop.
+   At the end it asks whether to start the program. Keep the window open until it says DONE.
 
-1. Scarica o clona questa cartella (ad esempio in `C:\Programmi-miei\VoxClarity`; evita cartelle
-   protette come `C:\Program Files`).
-2. Apri PowerShell nella cartella ed esegui, senza diritti di amministratore:
+> **If Windows shows a blue page "Windows protected your PC"**
+> This is Microsoft Defender SmartScreen. It appears because the program is new and not yet
+> digitally signed, not because something was found in it. Click **More info**, then **Run anyway**.
+> Your browser may also say that the file "is not commonly downloaded": choose **Keep**.
+> Code signing is planned for a future release; until then these warnings are expected.
+
+On the **first start** the AI models (~1 GB) are downloaded: the status bar says "Preparing the
+models..." and then "Ready". Start the program afterwards with the desktop icon.
+
+### Advanced / manual installation
+
+1. Download or clone this folder (for example to `C:\Tools\VoxClarity`; avoid protected folders such
+   as `C:\Program Files`).
+2. Open PowerShell in the folder and run, without administrator rights:
 
    ```powershell
    powershell -ExecutionPolicy Bypass -File install.ps1
    ```
 
-   Lo script controlla Python 3.12 e la scheda NVIDIA, crea `.venv` nella cartella, fissa la versione
-   di pip e installa i pacchetti: prima PyTorch e torchaudio (CUDA 12.8, solo dall'indice ufficiale
-   `https://download.pytorch.org/whl/cu128`, file `requirements-torch.txt`), poi tutto il resto solo da
-   PyPI (`requirements.txt`). Le versioni sono esatte e ogni file e' verificato con il suo hash
-   SHA-256 (`--require-hashes`): se un file non corrisponde, pip si ferma. Poi scarica ffmpeg e crea
-   il collegamento `VoxClarity.lnk` con l'icona del programma.
-3. **ffmpeg:** `install.ps1` scarica una build **LGPL** (non GPL) di una release **datata e fissa**
-   (`autobuild-2026-11-08-12-35`) del progetto BtbN FFmpeg-Builds
-   (<https://github.com/BtbN/FFmpeg-Builds>) nella cartella `ffmpeg`, **verifica il suo SHA-256**
-   confrontandolo con il valore scritto nello script e con i checksum pubblicati da BtbN per quella
-   release, e solo dopo la usa; controlla anche che non sia configurata con `--enable-gpl`. Se il
-   download o la verifica falliscono (le release datate di BtbN restano online per un tempo limitato)
-   usa un ffmpeg gia' presente nel PATH; se non c'e' ti dice cosa installare
+   The script checks Python 3.12 and the NVIDIA card, creates `.venv` in the folder, pins the pip
+   version and installs the packages: first PyTorch and torchaudio (CUDA 12.8, only from the official
+   index `https://download.pytorch.org/whl/cu128`, file `requirements-torch.txt`), then everything
+   else from PyPI only (`requirements.txt`). Versions are exact and every file is checked against its
+   SHA-256 hash (`--require-hashes`): if a file does not match, pip stops. It then downloads ffmpeg
+   and creates the `VoxClarity.lnk` shortcut (in the folder and on the desktop) with the program icon.
+3. **ffmpeg:** `install.ps1` downloads an **LGPL** build (not GPL) of a **fixed, dated release**
+   (`autobuild-2026-11-08-12-35`) of the BtbN FFmpeg-Builds project
+   (<https://github.com/BtbN/FFmpeg-Builds>) into the `ffmpeg` folder, **verifies its SHA-256**
+   against both the value written in the script and the checksums BtbN published for that release,
+   and only then uses it; it also verifies the build was not configured with `--enable-gpl`. If the
+   download or the verification fails (BtbN keeps dated releases online for a limited time) it uses
+   an ffmpeg already on PATH; if there is none it tells you what to install
    (`winget install Gyan.FFmpeg`).
-4. Avvia con un doppio clic su **`VoxClarity.lnk`** o **`VoxClarity.vbs`** (senza finestra nera;
-   `VoxClarity.bat` mostra la console per la diagnostica). Al **primo avvio** i modelli vengono
-   scaricati (~1 GB): la barra di stato dice "Preparo i modelli..." e poi "Pronto".
+4. Start by double-clicking **`VoxClarity.lnk`** or **`VoxClarity.vbs`** (no black console;
+   `VoxClarity.bat` shows the console for diagnostics). On the **first start** the models are
+   downloaded (~1 GB): the status bar says "Preparing the models..." and then "Ready".
 
-Puoi anche trascinare un file sopra `VoxClarity.vbs` per aprirlo gia' selezionato, oppure usare la riga di comando:
+You can also drop a file onto `VoxClarity.vbs` to open it preselected, or use the command line:
 
 ```powershell
-.venv\Scripts\python voxclarity.py registrazione.wav --preset warm_pro --target youtube
+.venv\Scripts\python voxclarity.py recording.wav --preset warm_pro --target youtube
 ```
 
-## Uso
+## Usage
 
-![VoxClarity: ingresso, parametri e uscite](docs/screenshots/main-it.png)
+![VoxClarity: input, settings and outputs](docs/screenshots/main-en.png)
 
-1. **Ingresso:** trascina uno o piu' file audio/video nel riquadro tratteggiato (o clicca per scegliere),
-   oppure scegli il microfono e premi **Registra**. I file trascinati nella finestra sono limitati a
-   4 GB ciascuno; per file piu' grandi usa la scelta del file (clic sul riquadro).
-2. **Parametri:** scegli suono, volume finale e cursori. Puoi salvare i settaggi con un nome.
-3. **Elabora.** Le uscite compaiono nella lista a destra (cartella predefinita
-   `Documenti\VoxClarity`, la cartella Documenti vera di Windows, anche se spostata; modificabile).
-   L'A/B **Originale / Studio** si ascolta con la barra spaziatrice. I file video mantengono
-   l'immagine, cambia solo l'audio.
-4. Il pulsante **Info** mostra versione, licenze, "Cerca aggiornamenti" e "Segnala un problema".
+1. **Input:** drop one or more audio/video files on the dashed box (or click to choose), or pick the
+   microphone and press **Record**. Files dropped into the window are limited to 4 GB each; for
+   larger files use the file chooser (click the box).
+2. **Settings:** choose sound, final volume and sliders. Settings can be saved under a name.
+3. **Process.** Outputs appear in the list on the right (default folder `Documents\VoxClarity`, the
+   real Windows Documents folder even if it was moved; changeable). Switch **Original / Studio**
+   with the space bar. Video files keep their picture; only the audio changes.
+4. The **About** button shows version, licences, "Check for updates" and "Report a problem".
 
-**Microfono, la prima volta:** la finestra usa un suo profilo del browser
-(`%LOCALAPPDATA%\VoxClarity\browser`) e un indirizzo locale fisso (porta 47811, o un'altra libera se
-e' occupata). Premendo **Registra** per la prima volta il browser ti chiede il permesso di usare il
-microfono: rispondi "Consenti" e il permesso viene ricordato. Finche' non l'hai dato, l'elenco mostra
-solo "Microfono predefinito" (il browser nasconde i nomi dei dispositivi); dopo la prima registrazione
-compaiono tutti i microfoni.
+**Microphone, the first time:** the window uses its own browser profile
+(`%LOCALAPPDATA%\VoxClarity\browser`) and a fixed local address (port 47811, or another free port if
+it is busy). The first time you press **Record** the browser asks for permission to use the
+microphone: answer "Allow" and the permission is remembered. Until then the list shows only "Default
+microphone" (the browser hides device names); after the first recording all microphones appear.
 
-## Dove vengono messi i file
+## Where files go
 
-| Cosa | Dove |
+| What | Where |
 |---|---|
-| Impostazioni (`config.json`, `settings.json`) e log | `%APPDATA%\VoxClarity` |
-| File di lavoro (anteprime, registrazioni, caricamenti) | `%LOCALAPPDATA%\VoxClarity` |
-| Profilo del browser della finestra (permesso microfono) | `%LOCALAPPDATA%\VoxClarity\browser` |
-| Risultati | `Documenti\VoxClarity` (o la cartella scelta) |
-| Modelli | cache di Hugging Face, `%USERPROFILE%\.cache\huggingface` |
+| Settings (`config.json`, `settings.json`) and logs | `%APPDATA%\VoxClarity` |
+| Work files (previews, recordings, uploads) | `%LOCALAPPDATA%\VoxClarity` |
+| Browser profile of the window (microphone permission) | `%LOCALAPPDATA%\VoxClarity\browser` |
+| Results | `Documents\VoxClarity` (or the folder you choose) |
+| Models | Hugging Face cache, `%USERPROFILE%\.cache\huggingface` |
 
-I dati dell'utente vanno in AppData. Nella cartella di installazione ci sono solo i file del
-programma piu' `.venv`, `ffmpeg`, `VoxClarity.lnk` e le cartelle `__pycache__` che Python crea da solo.
+User data goes to AppData. The install folder only holds the program files plus `.venv`, `ffmpeg`,
+`VoxClarity.lnk` and the `__pycache__` folders that Python creates by itself.
 
-## Prestazioni
+## Performance
 
-Misure su un computer con schede NVIDIA da 8 e 10 GB, driver recenti, Windows 11 (un solo computer: i
-tuoi numeri varieranno):
+Measured on one computer with 8 GB and 10 GB NVIDIA cards, recent drivers and Windows 11 (your
+numbers will vary):
 
-- Caricamento dei modelli: da 8 a 15 s a ogni avvio (cache gia' presente); al primo avvio circa 1 minuto
-  in piu' per il download di ~1 GB con una connessione veloce.
-- Memoria video: picco di circa 2,0 GB su un clip di 30 secondi (un blocco intero), circa 1,4 GB su
-  10 secondi; il file viene elaborato a blocchi di 30 secondi, quindi la memoria video non cresce con
-  la durata; la memoria RAM invece cresce con la lunghezza del file (l'audio viene caricato per
-  intero): per registrazioni di molte ore serve molta RAM.
-- Un clip audio sintetico di 30 s e' stato completato in circa 20 s su una scheda condivisa con altri
-  programmi, e un file video da 8 s in circa 14 s, compresi lettura e scrittura.
+- Model loading: 8 to 15 s at every start (cache already present); on the very first start about
+  1 extra minute to download ~1 GB on a fast connection.
+- Video memory: peak of about 2.0 GB on a 30-second clip (one full block), about 1.4 GB on 10
+  seconds; files are processed in 30-second blocks, so video memory does not grow with duration;
+  system RAM does grow with file length (the whole audio is loaded), so recordings of many hours need
+  a lot of RAM.
+- A synthetic 30 s audio clip finished in about 20 s on a card shared with other programs, and an 8 s
+  video file in about 14 s, including reading and writing.
 
-## Privacy e sicurezza
+## Privacy and security
 
-Tutto avviene sul tuo computer. Il server del programma ascolta solo su `127.0.0.1`, accetta solo
-richieste dalla finestra che ha aperto (ogni avvio genera un codice segreto casuale nell'indirizzo
-della finestra, necessario per ogni richiesta) e **nessun file audio, registrazione o dato personale
-viene inviato da nessuna parte**. Le uniche connessioni in rete sono: l'installazione (PyPI,
-PyTorch, BtbN), il primo scaricamento dei modelli da Hugging Face (il client della libreria e'
-configurato senza telemetria) e il pulsante "Cerca aggiornamenti", che chiede solo a GitHub l'ultima
-versione quando lo premi tu.
+Everything happens on your computer. The program's server only listens on `127.0.0.1`, only accepts
+requests from the window it opened (every start generates a random secret code in the window's
+address, required on every request) and **no audio file, recording or personal data is sent
+anywhere**. The only network connections are: the installation (PyPI, PyTorch, BtbN), the first model
+download from Hugging Face (the client library is configured without telemetry) and the "Check for
+updates" button, which only asks GitHub for the latest version when you press it.
 
-Il **microfono** viene aperto solo mentre registri, dopo la richiesta di permesso del browser, e
-si chiude quando premi Ferma.
+The **microphone** is opened only while you record, after the browser permission prompt, and is
+closed when you press Stop.
 
-Il **log** (`%APPDATA%\VoxClarity\logs`, gli ultimi 10 file giornalieri) contiene i **nomi dei file
-elaborati e i percorsi delle cartelle**, che possono includere il tuo nome utente di Windows; non
-contiene il contenuto dei file.
+The **log** (`%APPDATA%\VoxClarity\logs`, the last 10 daily files) contains the **names of the
+processed files and folder paths**, which may include your Windows user name; it does not contain the
+content of the files.
 
-"Segnala un problema" apre nel browser una pagina GitHub gia' compilata con versione, versione di
-Windows e nome della scheda video, e mostra il file di log: lo allegherai tu, se vuoi, dopo averlo
-letto e dopo aver tolto cio' che non vuoi condividere.
+"Report a problem" opens a pre-filled GitHub page in your browser with the version, Windows version
+and graphics card name, and shows the log file: you attach it yourself, if you want, after reading it
+and removing whatever you do not want to share.
 
-## Uso responsabile
+## Responsible use
 
-VoxClarity serve a **migliorare le tue registrazioni**: la voce resta quella registrata, rigenerata
-dal modello con lo stesso testo. **Non e' uno strumento di clonazione vocale** e non genera voci a
-partire da testo o da campioni di altre persone. Elabora solo registrazioni di cui hai i diritti e,
-se contengono altre persone, il loro consenso. Chi usa il programma e' responsabile del suo uso.
+VoxClarity is meant to **enhance your own recordings**: the voice stays the recorded one, regenerated
+by the model with the same text. It is **not a voice-cloning tool** and does not generate voices from
+text or from other people's samples. Only process recordings you have the rights to and, if they
+contain other people, their consent. You are responsible for how you use the program.
 
-## Licenza
+## Licence
 
-MIT, vedi [LICENSE](LICENSE). Componenti di terzi (Sidon MIT, w2v-BERT 2.0 MIT, FLEURS-R e
+MIT, see [LICENSE](LICENSE). Third-party components (Sidon MIT, w2v-BERT 2.0 MIT, FLEURS-R and
 LibriTTS-R CC BY 4.0, PyTorch BSD, ffmpeg LGPL, ...): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-Storia delle versioni: [CHANGELOG.md](CHANGELOG.md).
+Version history: [CHANGELOG.md](CHANGELOG.md).

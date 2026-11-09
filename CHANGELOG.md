@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.5 - Double-click installation
+
+- New `Installa.bat`: double-click installer for non-technical users (runs `install.ps1`, keeps the window
+  open with a clear final message in English and Italian, returns a non-zero code on failure).
+- `install.ps1` installs Python 3.12 by itself if it is missing, for the current user and without administrator
+  rights: first with winget; if winget is not available, with the official python.org installer (pinned 3.12.10,
+  SHA-256 verified). New `-DryRun` switch prints what it would do. Messages are English first, then Italian.
+- At the end a "VoxClarity" shortcut (with the program icon) is created on the desktop too, and the installer
+  offers to start the app.
+- README is now English (`README.md`, main page on GitHub) with the Italian version in `README.it.md`; new
+  3-step installation for normal users, SmartScreen note, measured disk use (about 6 GB).
+- First GitHub Release with a ready-to-use ZIP.
+
 ## 0.4.4 - "Default" entry and factory reset
 
 - The saved-settings list now starts with "Default" (Predefinito): the current working parameters (sound, final
