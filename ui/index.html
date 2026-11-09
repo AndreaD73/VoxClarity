@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>VoceStudio</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#0e1116;--card:#171b23;--line:#262c38;--tx:#e8ecf3;--mut:#8b94a7;--ac:#7c8cff;--ac2:#37d4c4;--bad:#ff6b6b;--ok:#4ade80}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 "Segoe UI",system-ui,sans-serif;overflow-x:hidden}
+body{display:flex;flex-direction:column;min-width:0}
+header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line)}
+header img{width:30px;height:30px}
+header h1{font-size:17px;margin:0;font-weight:600;letter-spacing:.2px}
+#lang{margin-left:auto;width:auto;padding:3px 8px;font-size:12px;border-radius:99px}
+.ver{color:var(--mut);font-size:12px;padding:3px 9px;border:1px solid var(--line);border-radius:99px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:18px 22px;align-items:start}
+main>.col:last-child{overflow-y:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+#drop{display:flex;align-items:center;gap:12px;border:2px dashed #38405a;border-radius:14px;padding:22px 16px;cursor:pointer;transition:.15s;min-width:0}
+#drop:hover,#drop.over{border-color:var(--ac);background:#1a2030}
+#drop svg{flex:none;width:30px;height:30px;stroke:var(--ac)}
+#fname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+label{display:block;color:var(--mut);font-size:12px;margin:0 0 5px}
+select{width:100%;background:#0f131a;color:var(--tx);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font:inherit}
+.row3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sl{display:grid;grid-template-columns:96px minmax(0,1fr) 34px;align-items:center;gap:10px;margin:9px 0}
+.sl span{color:var(--tx)}
+.sl output{color:var(--mut);text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--ac)}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+button{font:inherit;color:var(--tx);background:#222838;border:1px solid var(--line);border-radius:10px;padding:9px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+button:hover:not(:disabled){border-color:var(--ac)}
+button:disabled{opacity:.4;cursor:default}
+button.main{background:linear-gradient(135deg,#6a7bff,#37b6d4);border:0;color:#08101a;font-weight:600}
+button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ab{display:flex;gap:8px;margin:12px 0}
+.ab button{flex:1;justify-content:center}
+.ab button.on{background:var(--ac);border-color:var(--ac);color:#0a0d18;font-weight:600}
+audio{display:none}
+#seek{width:100%}
+.hint{color:var(--mut);font-size:12px;text-align:center}
+footer{border-top:1px solid var(--line);padding:10px 22px 12px}
+#bar{height:4px;background:#222838;border-radius:4px;overflow:hidden;margin-bottom:8px}
+#bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .3s}
+#status{font-size:13px;min-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#status.err{color:var(--bad)}#status.ok{color:var(--ok)}
+.hide{display:none!important}
+.rec{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+#bRec.on{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:600}
+#recT{color:var(--mut);font-size:12px;font-variant-numeric:tabular-nums}
+#lvl{height:4px;background:#222838;border-radius:4px;overflow:hidden;margin-top:8px}
+#lvl i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}
+.list{margin-top:10px;max-height:150px;overflow-y:auto;border:1px solid var(--line);border-radius:10px}
+.list .it{display:flex;gap:10px;align-items:center;padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--line);min-width:0}
+.list .it:last-child{border-bottom:0}
+.list .it:hover{background:#1a2030}
+.list .it.sel{background:#232b45;box-shadow:inset 3px 0 0 var(--ac)}
+.list .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .tm{flex:none;color:var(--mut);font-size:12px}
+.list .empty{padding:10px;color:var(--mut);font-size:12px;text-align:center}
+.list input[type=checkbox]{flex:none;accent-color:var(--ac);margin:0;width:15px;height:15px}
+.allrow{display:flex;justify-content:space-between;align-items:center;margin-top:10px;min-width:0}
+.allrow label{margin:0}
+.allrow button{padding:3px 10px;font-size:12px}
+.allrow+.list{margin-top:6px}
+#drop{padding:14px 16px}
+#playing{color:var(--tx)}
+.set{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:8px;align-items:center;margin-bottom:10px}
+.set button{padding:7px 11px}
+.setname{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin-bottom:10px}
+input[type=text]{width:100%;background:#0f131a;color:var(--tx);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font:inherit}
+button.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.folder{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin-bottom:10px}
+.folder span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mut);font-size:12px;min-width:0}
+.folder button{padding:6px 11px;font-size:12px}
+.outbtns{margin-top:10px}
+.outbtns button{padding:6px 12px;font-size:12px}
+.ibtn{padding:4px 11px;font-size:12px;border-radius:99px}
+.modal{position:fixed;inset:0;background:rgba(5,7,10,.72);display:flex;align-items:center;justify-content:center;z-index:10;padding:18px}
+.modal .card{max-width:640px;width:100%;max-height:100%;overflow-y:auto;background:#171b23}
+.modal h2{font-size:16px;margin:0 0 4px}.modal h3{font-size:13px;margin:16px 0 6px;color:var(--mut);font-weight:600}
+.modal p{margin:6px 0;color:var(--tx)}.modal a{color:var(--ac2)}
+.modal ul{margin:0;padding-left:18px}.modal li{margin:4px 0;overflow-wrap:anywhere}
+.modal .small{color:var(--mut);font-size:12px}
+#upMsg{min-height:18px;margin-top:8px;font-size:13px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header>
+  <img src="icon.svg" alt=""><h1>VoceStudio</h1>
+  <select id="lang" data-t="langTip"><option value="it">IT</option><option value="en">EN</option></select>
+  <span class="ver" id="ver">v-</span>
+  <button id="bAbout" class="ibtn" data-t="aboutTip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span data-i="about"></span></button>
+</header>
+<main>
+  <div class="col">
+    <div class="card">
+      <label data-i="s1">1. Ingresso</label>
+      <div id="drop" data-t="dropTip">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        <div style="min-width:0"><div id="fname" data-i="dropText"></div></div>
+      </div>
+      <div class="rec" style="margin-top:10px">
+        <select id="mic"><option value="" data-i="micDefault"></option></select>
+        <button id="bRec"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span id="recL"></span></button>
+      </div>
+      <div id="lvl"><i id="lvlf"></i></div>
+      <div id="recT"></div>
+      <div class="allrow"><label id="selCount"></label><button id="bAll" data-t="allTip"></button></div>
+      <div class="list" id="inList"></div>
+    </div>
+    <div class="card">
+      <div class="allrow" style="margin-top:0;margin-bottom:5px"><label data-i="s2"></label><button id="bReset" data-i="reset" data-t="resetTip"></button></div>
+      <div class="set">
+        <select id="setSel"><option value="" data-i="setPlaceholder"></option></select>
+        <button id="bLoad" data-i="load" data-t="loadTip"></button>
+        <button id="bSave" data-i="save" data-t="saveTip"></button>
+        <button id="bDel" data-t="delSetTip"></button>
+      </div>
+      <div class="setname hide" id="saveRow">
+        <input type="text" id="setName" maxlength="40" data-p="setNamePh">
+        <button id="bSaveOk" class="main" data-i="save"></button><button id="bSaveNo" data-i="cancel"></button>
+      </div>
+      <div class="row3">
+        <div><label data-i="sound"></label><select id="preset"></select></div>
+        <div><label data-i="volume" data-t="volumeTip"></label><select id="target"></select></div>
+      </div>
+      <div style="margin-top:8px" id="sliders"></div>
+    </div>
+    <div class="btns">
+      <button class="main" id="bRun" disabled><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg><span id="runL"></span></button>
+      <button id="bStop" class="hide" data-i="stop" data-t="stopTip"></button>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <label id="outTitle"></label>
+      <div class="folder"><span id="outDir"></span><button id="bPickDir" data-i="changeFolder" data-t="changeFolderTip"></button></div>
+      <div class="list" id="outList" style="margin-top:0"></div>
+      <div class="btns outbtns"><button id="bODel" disabled></button></div>
+    </div>
+    <div class="card">
+      <label><span data-i="listen"></span> <span id="playing"></span></label>
+      <div class="ab"><button id="aO" disabled data-i="orig"></button><button id="aS" disabled data-i="studio"></button></div>
+      <input type="range" id="seek" min="0" max="1000" value="0" disabled>
+      <div class="btns" style="margin-top:12px"><button id="bPlay" disabled><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span id="playL"></span></button></div>
+      <div class="hint" style="margin-top:10px" data-i="spaceHint"></div>
+      <audio id="aud0"></audio><audio id="aud1"></audio>
+    </div>
+    <div class="btns">
+      <button id="bFolder" class="hide"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span data-i="openFolder"></span></button>
+      <button id="bLog"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM9 12h7M9 16h7"/></svg><span data-i="log"></span></button>
+    </div>
+  </div>
+</main>
+<div class="modal hide" id="aboutBox"><div class="card">
+  <h2>VoceStudio <span id="abVer"></span></h2>
+  <p class="small" data-i="abTag"></p>
+  <p><span data-i="abLicense"></span></p>
+  <p><span data-i="abRepo"></span> <a id="abRepoLink" target="_blank" rel="noopener"></a></p>
+  <h3 data-i="abThird"></h3>
+  <ul id="abList"></ul>
+  <p class="small" data-i="abAttr"></p>
+  <p class="small" data-i="abPrivacy"></p>
+  <div class="btns" style="margin-top:14px">
+    <button id="bUpd" data-i="abCheck"></button>
+    <button id="bReport" data-i="abReport"></button>
+    <button id="bAbClose" class="main" data-i="abClose"></button>
+  </div>
+  <div id="upMsg"></div>
+</div></div>
+<footer><div id="bar"><i id="barfill"></i></div><div id="status"></div></footer>
+<script>
+const $=id=>document.getElementById(id);
+// Access token of this run (the server put it in the window URL): sent with every request.
+const TOKEN=new URLSearchParams(location.search).get("t")||"";
+const _fetch=window.fetch.bind(window);
+window.fetch=(u,o={})=>_fetch(u,Object.assign({},o,{headers:Object.assign({},o.headers||{},{"X-VS-Token":TOKEN})}));
+const tokUrl=u=>u+(u.includes("?")?"&":"?")+"t="+encodeURIComponent(TOKEN);
+// All visible texts: one dictionary per language. {name} style placeholders are filled by t().
+const I18N={
+it:{
+ s1:"1. Ingresso",s2:"2. Parametri",run:"3. Elabora",dropText:"Trascina uno o più file audio o video, o clicca",dropTip:"Trascina qui uno o più file, o clicca per sceglierli",
+ micDefault:"Microfono predefinito",micHint:"(premi Registra una volta per vedere tutti i microfoni)",mic:"Microfono",rec:"Registra",stop:"Ferma",stopTip:"Ferma la coda dopo il file in corso",recording:"Sto registrando: ",
+ noInputs:"Nessun ingresso: carica un file o registra",selCount:"Selezionati: {n} di {m}",selAll:"Seleziona tutti",selNone:"Nessuno",allTip:"Seleziona o deseleziona tutti gli ingressi",
+ setPlaceholder:"Settaggi salvati...",load:"Carica",save:"Salva",del:"Cancella",cancel:"Annulla",confirm:"Conferma",
+ loadTip:"Applica il settaggio scelto",saveTip:"Salva i parametri attuali con un nome",delSetTip:"Cancella il settaggio scelto",setNamePh:"Nome del settaggio",
+ sound:"Suono",volume:"Volume finale",volumeTip:"Porta il volume del file allo standard scelto, così non esce troppo basso o troppo alto",
+ p_warm_pro:"Caldo pro",p_studio:"Studio caldo",p_natural:"Naturale",p_podcast:"Podcast",p_radio:"Radio",
+ v_youtube:"Standard YouTube",v_podcast:"Standard podcast",v_none:"Livello neutro",
+ vt_youtube:"YouTube",vt_podcast:"Podcast",vt_none:"Livello-neutro",
+ sl_warmth:"Calore",sl_presence:"Presenza",sl_air:"Aria",sl_tightness:"Compattezza",sl_intensity:"Intensità",
+ outputsOf:"Uscite di {name}",outputs:"Uscite",noOutputs:"Ancora nessuna uscita: premi Elabora",pickInput:"Scegli un ingresso e premi Elabora",
+ changeFolder:"Cambia cartella",changeFolderTip:"Scegli la cartella dove vengono salvate le uscite",outDirTip:"Cartella delle uscite: {p}",
+ outDel:"Cancella",outDelTip:"Sposta l'uscita scelta nel cestino",
+ listen:"Ascolto:",noOut:"nessuna uscita scelta",orig:"Originale",studio:"Studio",play:"Ascolta",reset:"Ripristina",resetTip:"Riporta i cinque cursori ai valori di partenza (50)",
+ tip_warmth:"Corpo della voce (bassi, 200 Hz). 50 = come il suono scelto; 0 = -5 dB, 100 = +5 dB",
+ tip_presence:"Chiarezza e vicinanza (3,5 kHz). 0 = -5 dB, 100 = +5 dB",
+ tip_air:"Brillantezza (12 kHz). 0 = -6 dB, 100 = +6 dB",
+ tip_tightness:"Quanto il volume viene reso uniforme (compressione). 0 = meno, 100 = molto di più",
+ tip_intensity:"Quanto applicare il suono scelto. 0 = solo voce rigenerata senza ritocchi, 50 = suono pieno, 100 = suono accentuato",stopPlay:"Ferma",spaceHint:"Spazio = Originale / Studio",
+ openFolder:"Apri cartella",log:"Log",langTip:"Lingua",
+ ready:"Pronto",inputChosen:"Ingresso scelto: {name}. Imposta i parametri e premi Elabora",
+ listening:"In ascolto: {name}",readyToListen:"Pronto da ascoltare: {name}. Premi Ascolta",paused:"In pausa",
+ setLoaded:"Settaggio caricato: {name}",pickSet:"Scegli un settaggio dalla lista",writeName:"Scrivi un nome per il settaggio",
+ setSaved:"Settaggio salvato: {name}",pickSetDel:"Scegli il settaggio da cancellare",confirmSet:"Premi Conferma per cancellare {name}",setDeleted:"Settaggio cancellato: {name}",
+ opening:"Apro la scelta del file...",noFile:"Nessun file scelto",uploading:"Carico {name}...",tooBig:"{name}: file troppo grande (massimo 4 GB)",added:"Aggiunti {n} file: sono selezionati per l'elaborazione",
+ processing:"Elaboro {name} con {snd}...",queueStart:"Avvio la coda di {n} file...",error:"Errore: {err}",stopping:"Mi fermo dopo il file in corso...",
+ folderOpened:"Cartella aperta",logOpened:"Log aperto",
+ pickingFolder:"Apro la scelta della cartella...",folderSet:"Cartella delle uscite: {p}",noFolder:"Nessuna cartella scelta",
+ confirmOut:"Premi Conferma per spostare nel cestino {name}",outDeleted:"Uscita spostata nel cestino: {name}",noOutSel:"Scegli prima un'uscita",
+ micNA:"Microfono non disponibile: {err}",recStatus:"Sto registrando dal microfono: parla, poi premi Ferma",saving:"Salvo la registrazione...",
+ recSaved:"Registrazione salvata e scelta come ingresso: imposta i parametri e premi Elabora",
+ about:"Info",aboutTip:"Versione, licenze e aggiornamenti",abTag:"Migliora la voce di una registrazione con l'IA, tutto sul tuo computer.",
+ abLicense:"VoceStudio è software libero con licenza MIT. Copyright (c) 2026 Andrea Dotta.",abRepo:"Pagina del progetto:",abThird:"Componenti di terzi",
+ abAttr:"Sidon è stato addestrato su FLEURS-R (Google) e LibriTTS-R, entrambi con licenza CC BY 4.0: ne citiamo gli autori come richiesto. Elenco completo e link alle licenze in THIRD_PARTY_NOTICES.md.",
+ abPrivacy:"Privacy: l'elaborazione è locale e nessun tuo file o dato viene inviato. Le uniche connessioni sono lo scarico dei modelli al primo avvio e i pulsanti qui sopra, che premi tu. Il microfono si apre solo mentre registri, dopo la richiesta di permesso del browser.",
+ abCheck:"Cerca aggiornamenti",abReport:"Segnala un problema",abClose:"Chiudi",
+ upChecking:"Controllo in corso...",upNewer:"Nuova versione disponibile: {v}. Scaricala dalla pagina del progetto:",upCurrent:"Hai l'ultima versione ({v}).",
+ upNone:"Nessuna versione pubblicata sulla pagina del progetto (ancora).",upOffline:"Nessuna connessione a internet: riprova più tardi.",upError:"Impossibile controllare ora ({d}).",
+ reportDone:"Si è aperta la pagina GitHub già compilata (versione, Windows, scheda video) e la cartella del log: allega il file di log (si trova in {d}) dopo averlo controllato: contiene i nomi dei file e i percorsi delle cartelle, che possono includere il tuo nome utente di Windows.",
+ jsError:"ERRORE JS: {err}"},
+en:{
+ s1:"1. Input",s2:"2. Settings",run:"3. Process",dropText:"Drop one or more audio or video files, or click",dropTip:"Drop one or more files here, or click to choose them",
+ micDefault:"Default microphone",micHint:"(press Record once to see all microphones)",mic:"Microphone",rec:"Record",stop:"Stop",stopTip:"Stop the queue after the current file",recording:"Recording: ",
+ noInputs:"No inputs: load a file or record",selCount:"Selected: {n} of {m}",selAll:"Select all",selNone:"None",allTip:"Select or deselect all inputs",
+ setPlaceholder:"Saved settings...",load:"Load",save:"Save",del:"Delete",cancel:"Cancel",confirm:"Confirm",
+ loadTip:"Apply the chosen setting",saveTip:"Save the current parameters under a name",delSetTip:"Delete the chosen setting",setNamePh:"Setting name",
+ sound:"Sound",volume:"Final volume",volumeTip:"Brings the file volume to the chosen standard, so it is neither too quiet nor too loud",
+ p_warm_pro:"Warm pro",p_studio:"Warm studio",p_natural:"Natural",p_podcast:"Podcast",p_radio:"Radio",
+ v_youtube:"YouTube standard",v_podcast:"Podcast standard",v_none:"Neutral level",
+ vt_youtube:"YouTube",vt_podcast:"Podcast",vt_none:"Neutral-level",
+ sl_warmth:"Warmth",sl_presence:"Presence",sl_air:"Air",sl_tightness:"Tightness",sl_intensity:"Intensity",
+ outputsOf:"Outputs of {name}",outputs:"Outputs",noOutputs:"No outputs yet: press Process",pickInput:"Choose an input and press Process",
+ changeFolder:"Change folder",changeFolderTip:"Choose the folder where outputs are saved",outDirTip:"Output folder: {p}",
+ outDel:"Delete",outDelTip:"Move the chosen output to the Recycle Bin",
+ listen:"Listening:",noOut:"no output chosen",orig:"Original",studio:"Studio",play:"Listen",reset:"Reset",resetTip:"Put the five sliders back to their starting values (50)",
+ tip_warmth:"Body of the voice (lows, 200 Hz). 50 = as the chosen sound; 0 = -5 dB, 100 = +5 dB",
+ tip_presence:"Clarity and closeness (3.5 kHz). 0 = -5 dB, 100 = +5 dB",
+ tip_air:"Brightness (12 kHz). 0 = -6 dB, 100 = +6 dB",
+ tip_tightness:"How even the volume is made (compression). 0 = less, 100 = much more",
+ tip_intensity:"How much of the chosen sound to apply. 0 = regenerated voice only, 50 = full sound, 100 = emphasised",stopPlay:"Stop",spaceHint:"Space = Original / Studio",
+ openFolder:"Open folder",log:"Log",langTip:"Language",
+ ready:"Ready",inputChosen:"Input chosen: {name}. Set the parameters and press Process",
+ listening:"Playing: {name}",readyToListen:"Ready to listen: {name}. Press Play",paused:"Paused",
+ setLoaded:"Setting loaded: {name}",pickSet:"Choose a setting from the list",writeName:"Write a name for the setting",
+ setSaved:"Setting saved: {name}",pickSetDel:"Choose the setting to delete",confirmSet:"Press Confirm to delete {name}",setDeleted:"Setting deleted: {name}",
+ opening:"Opening the file chooser...",noFile:"No file chosen",uploading:"Uploading {name}...",tooBig:"{name}: file too large (4 GB maximum)",added:"Added {n} files: they are selected for processing",
+ processing:"Processing {name} with {snd}...",queueStart:"Starting the queue of {n} files...",error:"Error: {err}",stopping:"Stopping after the current file...",
+ folderOpened:"Folder opened",logOpened:"Log opened",
+ pickingFolder:"Opening the folder chooser...",folderSet:"Output folder: {p}",noFolder:"No folder chosen",
+ confirmOut:"Press Confirm to move {name} to the Recycle Bin",outDeleted:"Output moved to the Recycle Bin: {name}",noOutSel:"Choose an output first",
+ micNA:"Microphone not available: {err}",recStatus:"Recording from the microphone: speak, then press Stop",saving:"Saving the recording...",
+ recSaved:"Recording saved and chosen as input: set the parameters and press Process",
+ about:"About",aboutTip:"Version, licences and updates",abTag:"Improves the voice of a recording with AI, entirely on your computer.",
+ abLicense:"VoceStudio is free software under the MIT licence. Copyright (c) 2026 Andrea Dotta.",abRepo:"Project page:",abThird:"Third-party components",
+ abAttr:"Sidon was trained on FLEURS-R (Google) and LibriTTS-R, both CC BY 4.0: their authors are credited as the licence requires. Full list and links to the licences in THIRD_PARTY_NOTICES.md.",
+ abPrivacy:"Privacy: processing is local and none of your files or data is sent anywhere. The only connections are the model download on first run and the buttons above, which you press yourself. The microphone is opened only while you record, after the browser permission prompt.",
+ abCheck:"Check for updates",abReport:"Report a problem",abClose:"Close",
+ upChecking:"Checking...",upNewer:"A newer version is available: {v}. Get it from the project page:",upCurrent:"You have the latest version ({v}).",
+ upNone:"No release has been published on the project page (yet).",upOffline:"No internet connection: try again later.",upError:"Cannot check right now ({d}).",
+ reportDone:"The pre-filled GitHub page (version, Windows, graphics card) and the log folder were opened: attach the log file (it is in {d}) after checking it: it contains file names and folder paths, which may include your Windows user name.",
+ jsError:"JS ERROR: {err}"}
+};
+let LANG="it";
+const t=(k,o={})=>(I18N[LANG][k]??I18N.it[k]??k).replace(/\{(\w+)\}/g,(_,x)=>o[x]??"");
+let file="",busy=false,cur=1,outs=[],selOut=null,ins=[],checked=new Set(),outDir="",PRESETS=[],TARGETS=[],queueRun=false,recOn=false,wantMic="";
+const SLK=["warmth","presence","air","tightness","intensity"];
+const post=(u,b={})=>fetch(u,{method:"POST",body:JSON.stringify(b)}).then(r=>r.json());
+const esc=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const base=p=>p.split(/[\\/]/).pop();
+function status(x,cls=""){const s=$("status");s.textContent=x;s.className=cls;post("/api/clientlog",{msg:x}).catch(()=>{})}
+function updRun(){const n=[...checked].filter(p=>ins.some(i=>i.path==p)).length;
+  $("runL").textContent=t("run")+(n>=2?" ("+n+")":"");$("bRun").disabled=busy||!(file||n);$("bStop").classList.toggle("hide",!(busy&&queueRun))}
+function setBusy(b){busy=b;if(!b)queueRun=false;$("bRec").disabled=b;updRun()}
+// Config remembered between sessions (language, folder, sound, volume, sliders, microphone, setting, input).
+let saveT=null;
+const cfgBody=()=>({lang:LANG,preset:$("preset").value,target:$("target").value,params:params(),mic:wantMic,setName:loadedSet,input:file});
+function saveCfg(){clearTimeout(saveT);saveT=setTimeout(()=>post("/api/config",cfgBody()).catch(()=>{}),500)}
+function flushCfg(){clearTimeout(saveT);fetch("/api/config",{method:"POST",body:JSON.stringify(cfgBody()),keepalive:true}).catch(()=>{})}
+addEventListener("pagehide",flushCfg);
+// Inputs: every uploaded, recorded or picked file; one is current, several can be checked for the queue.
+async function refreshInputs(){
+  ins=(await (await fetch("/api/inputs")).json()).inputs;
+  for(const p of [...checked])if(!ins.some(i=>i.path==p))checked.delete(p);
+  $("inList").innerHTML=ins.length?ins.map((i,k)=>`<div class="it${i.path==file?" sel":""}" data-k="${k}"><input type="checkbox"${checked.has(i.path)?" checked":""}><span class="nm">${esc(i.name)}</span><span class="tm">${esc(i.added)}</span></div>`).join(""):`<div class="empty">${esc(t("noInputs"))}</div>`;
+  [...$("inList").querySelectorAll(".it")].forEach(el=>{const p=ins[+el.dataset.k].path,cb=el.querySelector("input");
+    el.onclick=()=>selectInput(p);cb.onclick=e=>{e.stopPropagation();cb.checked?checked.add(p):checked.delete(p);updSel()}});
+  updSel();
+}
+function updSel(){const n=[...checked].filter(p=>ins.some(i=>i.path==p)).length;
+  $("selCount").textContent=ins.length?t("selCount",{n,m:ins.length}):"";$("bAll").textContent=n==ins.length&&n?t("selNone"):t("selAll");
+  $("bAll").disabled=!ins.length;updRun()}
+$("bAll").onclick=()=>{const all=checked.size>=ins.length&&ins.every(i=>checked.has(i.path));
+  ins.forEach(i=>all?checked.delete(i.path):checked.add(i.path));
+  [...$("inList").querySelectorAll(".it")].forEach((el,k)=>el.querySelector("input").checked=checked.has(ins[k].path));updSel()};
+async function selectInput(p){file=p;$("fname").textContent=t("dropText");setBusy(busy);saveCfg();
+  await refreshInputs();updOutTitle();await refreshOutputs();
+  status(t("inputChosen",{name:base(p)}))}
+function updOutTitle(){$("outTitle").textContent=file?t("outputsOf",{name:base(file)}):t("outputs")}
+// Outputs: files produced from the selected input; the sound is in the name.
+async function refreshOutputs(selectUrl){
+  if(!file){$("outList").innerHTML=`<div class="empty">${esc(t("pickInput"))}</div>`;return}
+  const r=await (await fetch("/api/outputs?path="+encodeURIComponent(file))).json();outs=r.outputs;
+  $("outList").innerHTML=outs.length?outs.map((o,k)=>`<div class="it${selOut&&o.url==selOut.url?" sel":""}" data-k="${k}"><span class="nm">${esc(o.name)}</span><span class="tm">${esc(o.sound)}</span></div>`).join(""):`<div class="empty">${esc(t("noOutputs"))}</div>`;
+  [...$("outList").querySelectorAll(".it")].forEach(el=>el.onclick=()=>playOut(outs[+el.dataset.k],true));
+  if(selectUrl){const o=outs.find(o=>o.url==selectUrl);if(o)playOut(o,false)}
+  $("bODel").disabled=!selOut||!outs.some(o=>o.url==selOut.url);
+}
+function playOut(o,play){selOut=o;A.forEach(a=>a.pause());A[0].src=tokUrl(o.orig);A[1].src=tokUrl(o.url);
+  for(const id of ["aO","aS","bPlay","seek"])$(id).disabled=false;$("bODel").disabled=false;pick(1);A[0].currentTime=A[1].currentTime=0;
+  $("playing").textContent=o.name;[...$("outList").querySelectorAll(".it")].forEach(el=>el.classList.toggle("sel",outs[+el.dataset.k].url==o.url));
+  if(o.path){lastOutput=o.path;$("bFolder").classList.remove("hide")}
+  if(play){A.forEach(a=>a.play());status(t("listening",{name:o.name}))}else status(t("readyToListen",{name:o.name}),"ok")}
+function clearPlayer(){selOut=null;A.forEach(a=>{a.pause();a.removeAttribute("src");a.load()});
+  for(const id of ["aO","aS","bPlay","seek"])$(id).disabled=true;$("seek").value=0;$("playing").textContent=t("noOut");$("bODel").disabled=true}
+let lastOutput="";
+// Output folder shown short, full path in the tooltip.
+function shortPath(p){if(p.length<=40)return p;const a=p.split(/[\\/]/);return a[0]+"\\…\\"+a.slice(-2).join("\\")}
+function showDir(){$("outDir").textContent=shortPath(outDir);$("outDir").title=t("outDirTip",{p:outDir})}
+$("bPickDir").onclick=async()=>{status(t("pickingFolder"));const r=await post("/api/pickfolder");
+  if(r.path){outDir=r.outdir;showDir();status(t("folderSet",{p:outDir}),"ok");await refreshOutputs()}else status(t("noFolder"))};
+// Delete one output (Recycle Bin), two-step confirm.
+let delOutArm="";
+$("bODel").onclick=async()=>{if(!selOut)return status(t("noOutSel"),"err");const o=selOut,f=o.file||o.path;
+  if(delOutArm!=o.url){delOutArm=o.url;$("bODel").classList.add("danger");$("bODel").textContent=t("confirm");status(t("confirmOut",{name:o.name}));
+    setTimeout(()=>{delOutArm="";$("bODel").classList.remove("danger");$("bODel").textContent=t("outDel")},4000);return}
+  delOutArm="";$("bODel").classList.remove("danger");$("bODel").textContent=t("outDel");
+  const r=await post("/api/outputs/delete",{path:f});if(r.error)return status(t("error",{err:r.error}),"err");
+  if(selOut&&selOut.url==o.url)clearPlayer();await refreshOutputs();status(t("outDeleted",{name:o.name}),"ok")};
+// Language: everything is re-rendered, no reload.
+function optsFill(sel,keys,pref){const v=sel.value;sel.length=0;for(const k of keys)sel.add(new Option(t(pref+k),k));sel.value=v||keys[0]}
+function applyLang(){
+  document.documentElement.lang=LANG;$("lang").value=LANG;
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+  document.querySelectorAll("[data-t]").forEach(e=>e.title=t(e.dataset.t));
+  document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=t(e.dataset.p));
+  optsFill($("preset"),PRESETS,"p_");optsFill($("target"),TARGETS,"v_");
+  for(const k of SLK){$("sl_"+k).textContent=t("sl_"+k);$("sl_"+k).title=$("s_"+k).title=t("tip_"+k)}
+  $("recL").textContent=t(recOn?"stop":"rec");$("bDel").textContent=t(delArm?"confirm":"del");$("bODel").textContent=t("outDel");$("bODel").title=t("outDelTip");
+  $("playing").textContent=selOut?selOut.name:t("noOut");$("bLog").title="";
+  const m=$("mic").options[0];if(m)m.textContent=t("micDefault");
+  showDir();updOutTitle();updSel();listMics();updPlay();
+  [...$("setSel").options].forEach((o,k)=>{if(!k)o.textContent=t("setPlaceholder")});
+}
+$("lang").onchange=async()=>{LANG=$("lang").value;await post("/api/config",{lang:LANG});applyLang();status(t("ready"));await refreshInputs();await refreshOutputs()};
+async function init(){
+  const [i,c]=await Promise.all([fetch("/api/info").then(r=>r.json()),fetch("/api/config").then(r=>r.json())]);
+  const cfg=c.config;LANG=cfg.lang||"en";outDir=c.outdir;
+  $("ver").textContent="v"+i.version;REPO=i.repo;document.title="VoceStudio "+i.version;
+  PRESETS=i.presets;TARGETS=i.targets;DEF=i.defaults;
+  $("sliders").innerHTML=SLK.map(k=>`<div class="sl"><span id="sl_${k}"></span><input type="range" id="s_${k}" min="0" max="100" value="${DEF[k]}"><output id="o_${k}">${DEF[k]}</output></div>`).join("");
+  for(const k of SLK)$("s_"+k).oninput=e=>{$("o_"+k).textContent=e.target.value;saveCfg()};
+  optsFill($("preset"),PRESETS,"p_");optsFill($("target"),TARGETS,"v_");
+  if(PRESETS.includes(cfg.preset))$("preset").value=cfg.preset;
+  $("target").value=TARGETS.includes(cfg.target)?cfg.target:"youtube";
+  for(const k of SLK){const v=cfg.params&&cfg.params[k];if(typeof v=="number"){$("s_"+k).value=v;$("o_"+k).textContent=v}}
+  $("preset").onchange=$("target").onchange=saveCfg;
+  $("bReset").onclick=()=>{for(const k of SLK){$("s_"+k).value=DEF[k];$("o_"+k).textContent=DEF[k]}saveCfg()};
+  wantMic=cfg.mic||"";
+  await refreshInputs();await refreshSets(cfg.setName);if(SETS[cfg.setName])loadedSet=cfg.setName;
+  applyLang();
+  status(t("ready"));
+  const start=i.preselect||(ins.some(x=>x.path==cfg.input)?cfg.input:"");
+  if(start)selectInput(start);else refreshOutputs();
+  setInterval(()=>post("/api/ping").catch(()=>{}),3000);post("/api/ping");
+  warmWatch();
+}
+// Start-up: show "preparing the models" and, if loading fails (no NVIDIA card, offline first run), the reason.
+let warmShown="";
+async function warmWatch(){try{const s=await (await fetch("/api/status")).json();
+  if(s.warm=="loading"){if(!busy&&s.state!="running"&&warmShown!=s.msg){warmShown=s.msg;status(s.msg)}return setTimeout(warmWatch,1000)}
+  if(s.warm=="failed"&&s.state=="error"&&!busy){status(s.msg,"err");return}
+  if(s.warm=="done"&&!busy&&warmShown&&$("status").textContent==warmShown)status(t("ready"))}catch(e){}}
+const params=()=>Object.fromEntries(SLK.map(k=>[k,+$("s_"+k).value]));
+const body=()=>({path:file,params:params(),preset:$("preset").value,target:$("target").value,tag:outTag()});
+// Output name = every setting used: saved setting name, or sound + final volume (+ slider values when changed); follows the language.
+let DEF={};
+function outTag(){const s=activeSet();if(s)return s;
+  const p=params(),ch=SLK.some(k=>p[k]!=DEF[k]);
+  return [$("preset").options[$("preset").selectedIndex].text,t("vt_"+$("target").value)]
+    .concat(ch?[SLK.map(k=>t("sl_"+k).slice(0,2)+p[k]).join("")]:[]).join("_")}
+// Saved settings: stored by the app (AppData), chosen from the list; the output name carries the setting name.
+let SETS={},loadedSet="";
+const curData=()=>({preset:$("preset").value,target:$("target").value,params:params()});
+const activeSet=()=>loadedSet&&SETS[loadedSet]&&JSON.stringify(SETS[loadedSet])==JSON.stringify(curData())?loadedSet:"";
+function fillSets(d,sel){SETS=d;const s=$("setSel");s.length=1;for(const n of Object.keys(d).sort())s.add(new Option(n,n));s.value=sel&&d[sel]?sel:""}
+async function refreshSets(sel){fillSets((await (await fetch("/api/settings")).json()).settings,sel)}
+function applySet(n){const d=SETS[n];if(!d)return;$("preset").value=d.preset;$("target").value=d.target;
+  for(const k of SLK){$("s_"+k).value=d.params[k];$("o_"+k).textContent=d.params[k]}loadedSet=n;saveCfg();status(t("setLoaded",{name:n}),"ok")}
+$("bLoad").onclick=()=>{const n=$("setSel").value;if(!n)return status(t("pickSet"),"err");applySet(n)};
+$("setSel").ondblclick=()=>$("bLoad").onclick();
+$("bSave").onclick=()=>{$("saveRow").classList.remove("hide");$("setName").value=$("setSel").value||loadedSet||"";$("setName").focus()};
+$("bSaveNo").onclick=()=>$("saveRow").classList.add("hide");
+$("bSaveOk").onclick=async()=>{const n=$("setName").value.trim();if(!n)return status(t("writeName"),"err");
+  const r=await post("/api/settings/save",{name:n,data:curData()});fillSets(r.settings,n);loadedSet=n;saveCfg();$("saveRow").classList.add("hide");status(t("setSaved",{name:n}),"ok")};
+$("setName").onkeydown=e=>{if(e.key=="Enter")$("bSaveOk").onclick();if(e.key=="Escape")$("bSaveNo").onclick()};
+let delArm="";
+$("bDel").onclick=async()=>{const n=$("setSel").value;if(!n)return status(t("pickSetDel"),"err");
+  if(delArm!=n){delArm=n;$("bDel").classList.add("danger");$("bDel").textContent=t("confirm");status(t("confirmSet",{name:n}));
+    setTimeout(()=>{delArm="";$("bDel").classList.remove("danger");$("bDel").textContent=t("del")},4000);return}
+  const r=await post("/api/settings/delete",{name:n});delArm="";$("bDel").classList.remove("danger");$("bDel").textContent=t("del");
+  if(loadedSet==n){loadedSet="";saveCfg()}fillSets(r.settings);status(t("setDeleted",{name:n}),"ok")};
+// Add files (picked or dropped): all go into the list and get checked; the first becomes current.
+async function addPaths(paths){if(!paths.length)return;paths.forEach(p=>checked.add(p));
+  await selectInput(paths[0]);if(paths.length>1)status(t("added",{n:paths.length}),"ok")}
+$("drop").onclick=async()=>{status(t("opening"));const r=await post("/api/pick");if(r.paths&&r.paths.length)addPaths(r.paths);else status(t("noFile"))};
+const dz=$("drop");
+dz.ondragover=e=>{e.preventDefault();dz.classList.add("over")};dz.ondragleave=()=>dz.classList.remove("over");
+dz.ondrop=async e=>{e.preventDefault();dz.classList.remove("over");const fs=[...e.dataTransfer.files];if(!fs.length)return;
+  const paths=[];for(const f of fs){if(f.size>4*2**30){status(t("tooBig",{name:f.name}),"err");continue}status(t("uploading",{name:f.name}));
+    try{const r=await (await fetch("/api/upload?name="+encodeURIComponent(f.name),{method:"POST",body:f})).json();
+      if(r.path)paths.push(r.path);else status(t("error",{err:r.error||"?"}),"err")}catch(e){status(t("error",{err:e.message}),"err")}}
+  if(paths.length)addPaths(paths)};
+async function run(){
+  const list=[...checked].filter(p=>ins.some(i=>i.path==p)),multi=list.length>=2;
+  setBusy(true);A.forEach(a=>a.pause());queueRun=multi;updRun();
+  const snd=outTag().replace(/_/g," / ");
+  status(multi?t("queueStart",{n:list.length}):t("processing",{name:base(file),snd}));
+  const r=await post("/api/full",multi?Object.assign(body(),{paths:list}):body());if(r.error){status(t("error",{err:r.error}),"err");setBusy(false);return}
+  poll()}
+async function poll(){
+  const s=await (await fetch("/api/status")).json();
+  $("barfill").style.width=(s.progress*100)+"%";
+  if(s.state=="running"){status(s.msg);return setTimeout(poll,500)}
+  setBusy(false);
+  if(s.state=="error"){status(s.msg,"err");await refreshOutputs();return}
+  status(s.msg,"ok");await refreshOutputs(s.result&&s.result.url)}
+$("bRun").onclick=run;
+$("bStop").onclick=()=>{post("/api/stop");status(t("stopping"))};
+$("bFolder").onclick=()=>{post("/api/openfolder",{path:lastOutput});status(t("folderOpened"))};
+$("bLog").onclick=()=>{post("/api/openlog");status(t("logOpened"))};
+// A/B: both tracks play in sync, only one is audible
+const A=[$("aud0"),$("aud1")];
+function pick(n){cur=n;A[0].muted=n!=0;A[1].muted=n!=1;$("aO").classList.toggle("on",n==0);$("aS").classList.toggle("on",n==1)}
+$("aO").onclick=()=>pick(0);$("aS").onclick=()=>pick(1);
+const curName=()=>t(cur?"studio":"orig");
+$("bPlay").onclick=()=>{if(A[0].paused){A.forEach(a=>a.play());status(t("listening",{name:curName()}))}else{A.forEach(a=>a.pause());status(t("paused"))}};
+document.addEventListener("keydown",e=>{if(e.code=="Space"&&!$("aO").disabled&&!["SELECT","INPUT"].includes(e.target.tagName)){e.preventDefault();pick(1-cur);if(A[0].paused)A.forEach(a=>a.play());status(t("listening",{name:curName()}))}});
+let seeking=false;
+A[0].ontimeupdate=()=>{if(A[0].duration&&!seeking)$("seek").value=A[0].currentTime/A[0].duration*1000;if(Math.abs(A[0].currentTime-A[1].currentTime)>.08)A[1].currentTime=A[0].currentTime};
+A[0].onended=()=>A[1].pause();
+// Listen button reads Stop while audio plays (any way playback starts or stops).
+function updPlay(){$("playL").textContent=t(!A[0].paused&&!A[0].ended?"stopPlay":"play")}
+for(const ev of ["play","playing","pause","ended","emptied"])A[0].addEventListener(ev,updPlay);
+// While dragging, the bar is not moved by playback; on release both tracks jump to the new point.
+$("seek").onpointerdown=()=>{seeking=true};
+$("seek").oninput=e=>{seeking=true};
+$("seek").onchange=e=>{A.forEach(a=>{if(a.duration)a.currentTime=e.target.value/1000*a.duration});seeking=false};
+// Microphone recording: record, stop, the take becomes a new input.
+let rec=null,recChunks=[],recStream=null,recStart=0,recTimer=null,actx=null;
+// The microphone is NEVER opened just to list devices. Until the browser has granted permission it hides the
+// device names: then only "Default microphone" and a hint are shown. After the first Record the names appear
+// (the window has its own browser profile and a fixed address, so the permission is remembered).
+async function listMics(){try{const d=await navigator.mediaDevices.enumerateDevices();
+  const ins=d.filter(x=>x.kind=="audioinput"&&x.deviceId!="default"&&x.deviceId!="communications");
+  const named=ins.filter(x=>x.label),s=$("mic");
+  s.length=1;for(const m of named)s.add(new Option(m.label,m.deviceId));
+  if(ins.length&&!named.length){const h=new Option(t("micHint"),"__hint");h.disabled=true;s.add(h)}
+  s.value=[...s.options].some(o=>o.value==wantMic&&!o.disabled)?wantMic:""}catch(e){}}
+$("mic").onchange=()=>{wantMic=$("mic").value;saveCfg()};
+function stamp(){const d=new Date(),z=n=>String(n).padStart(2,"0");return d.getFullYear()+z(d.getMonth()+1)+z(d.getDate())+"-"+z(d.getHours())+z(d.getMinutes())+z(d.getSeconds())}
+async function startRec(){
+  try{recStream=await navigator.mediaDevices.getUserMedia({audio:{deviceId:$("mic").value?{exact:$("mic").value}:undefined,
+    echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1}})}
+  catch(e){status(t("micNA",{err:e.message}),"err");return}
+  listMics();recChunks=[];rec=new MediaRecorder(recStream,{mimeType:"audio/webm;codecs=opus",audioBitsPerSecond:256000});
+  rec.ondataavailable=e=>{if(e.data.size)recChunks.push(e.data)};rec.onstop=saveRec;rec.start(1000);
+  actx=new AudioContext();const an=actx.createAnalyser();an.fftSize=1024;actx.createMediaStreamSource(recStream).connect(an);
+  const buf=new Float32Array(an.fftSize);recStart=Date.now();
+  recTimer=setInterval(()=>{an.getFloatTimeDomainData(buf);let pk=0;for(const v of buf)pk=Math.max(pk,Math.abs(v));
+    $("lvlf").style.width=Math.min(100,pk*100)+"%";$("lvlf").style.background=pk>.95?"var(--bad)":"var(--ok)";
+    const s=Math.round((Date.now()-recStart)/1000);$("recT").textContent=t("recording")+Math.floor(s/60)+":"+String(s%60).padStart(2,"0")},100);
+  A.forEach(a=>a.pause());recOn=true;$("bRec").classList.add("on");$("recL").textContent=t("stop");$("bRun").disabled=true;status(t("recStatus"))}
+function stopRec(){if(rec&&rec.state!="inactive")rec.stop();clearInterval(recTimer);recStream.getTracks().forEach(x=>x.stop());if(actx)actx.close();
+  recOn=false;$("bRec").classList.remove("on");$("recL").textContent=t("rec");$("lvlf").style.width="0"}
+async function saveRec(){const blob=new Blob(recChunks,{type:"audio/webm"});const name="recording-"+stamp()+".weba";
+  status(t("saving"));const r=await (await fetch("/api/upload?name="+encodeURIComponent(name),{method:"POST",body:blob})).json();
+  $("recT").textContent="";checked.add(r.path);await selectInput(r.path);status(t("recSaved"),"ok")}
+$("bRec").onclick=()=>{if(rec&&rec.state=="recording")stopRec();else startRec()};
+navigator.mediaDevices&&navigator.mediaDevices.addEventListener("devicechange",listMics);listMics();
+
+// About panel: version, licences, update check, problem report.
+let REPO="";
+const THIRD=[["Sidon v0.1 (Sarulab, University of Tokyo)","MIT","https://huggingface.co/sarulab-speech/sidon-v0.1"],
+ ["w2v-BERT 2.0 (Meta)","MIT","https://huggingface.co/facebook/w2v-bert-2.0"],
+ ["FLEURS-R (Google)","CC BY 4.0","https://huggingface.co/datasets/google/fleurs-r"],
+ ["LibriTTS-R (OpenSLR SLR141)","CC BY 4.0","https://www.openslr.org/141/"],
+ ["PyTorch, torchaudio","BSD-3-Clause","https://pytorch.org"],
+ ["Hugging Face Transformers, huggingface_hub","Apache-2.0","https://github.com/huggingface/transformers"],
+ ["NumPy, SciPy, pyloudnorm","BSD-3-Clause / MIT","https://scipy.org"],
+ ["python-soundfile / libsndfile","BSD-3-Clause / LGPL-2.1+","https://github.com/bastibe/python-soundfile"],
+ ["FFmpeg (LGPL build)","LGPL-3.0","https://ffmpeg.org"]];
+function fillAbout(){$("abVer").textContent=$("ver").textContent;
+  $("abRepoLink").href=REPO;$("abRepoLink").textContent=REPO;
+  $("abList").innerHTML=THIRD.map(x=>`<li>${esc(x[0])} - ${esc(x[1])} - <a href="${esc(x[2])}" target="_blank" rel="noopener">${esc(x[2])}</a></li>`).join("")}
+$("bAbout").onclick=()=>{fillAbout();$("upMsg").textContent="";$("aboutBox").classList.remove("hide")};
+$("bAbClose").onclick=()=>$("aboutBox").classList.add("hide");
+$("aboutBox").onclick=e=>{if(e.target==$("aboutBox"))$("aboutBox").classList.add("hide")};
+document.addEventListener("keydown",e=>{if(e.key=="Escape")$("aboutBox").classList.add("hide")});
+$("bUpd").onclick=async()=>{const m=$("upMsg");m.textContent=t("upChecking");m.style.color="";
+  try{const r=await (await fetch("/api/update-check")).json();
+    const cur=$("ver").textContent.replace(/^v/,"");
+    if(r.state=="newer"){m.innerHTML=esc(t("upNewer",{v:r.latest}))+` <a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a>`;m.style.color="var(--ok)"}
+    else if(r.state=="current")m.textContent=t("upCurrent",{v:cur});
+    else if(r.state=="none")m.textContent=t("upNone");
+    else if(r.state=="offline")m.textContent=t("upOffline");
+    else m.textContent=t("upError",{d:r.detail||"?"})}
+  catch(e){m.textContent=t("upError",{d:e.message})}};
+$("bReport").onclick=async()=>{try{const r=await post("/api/report");$("upMsg").style.color="";$("upMsg").textContent=t("reportDone",{d:r.logdir})}catch(e){$("upMsg").textContent=t("error",{err:e.message})}};
+// Fit the window height to the content (header + main + footer); width is kept.
+let fitT=null;
+// The window ends just below the Process button (+ footer); the right column scrolls inside that height.
+function fitWindow(){const left=document.querySelector("main>.col"),right=document.querySelector("main>.col:last-child");
+  right.style.maxHeight=left.offsetHeight+"px";
+  const bottom=$("bRun").getBoundingClientRect().bottom+window.scrollY+18,
+    h=Math.ceil(bottom+document.querySelector("footer").offsetHeight)+(outerHeight-innerHeight),H=Math.min(h,screen.availHeight);
+  if(Math.abs(H-outerHeight)>2){resizeTo(outerWidth,H);
+    setTimeout(()=>post("/api/clientlog",{msg:"fit window: wanted "+H+" got "+outerHeight}),300)}
+  if(Math.abs(H-(window._savedH||0))>2){window._savedH=H;post("/api/config",{winH:H}).catch(()=>{})}}
+new ResizeObserver(()=>{clearTimeout(fitT);fitT=setTimeout(()=>{try{fitWindow()}catch(e){}},120)}).observe(document.body);
+window.addEventListener("error",e=>post("/api/clientlog",{msg:t("jsError",{err:e.message})}));
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+.venv/
+ffmpeg/
+__pycache__/
+*.pyc
+logs/
+work/
+config.json
+*.log
+# test material and generated audio
+*.wav
+*.weba
+*.mp4
+*.lnk
