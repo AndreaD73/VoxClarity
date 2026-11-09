@@ -6,6 +6,8 @@ Turns a recording made with a cheap microphone into a studio-sounding one, using
 computer's graphics card. Drag in an audio or video file (or record from the microphone), press
 **Process**, and listen to the original and the result side by side.
 
+![VoxClarity: main window](docs/screenshots/main-en.png)
+
 The engine is [Sidon](https://github.com/sarulab-speech/Sidon) (Sarulab, University of Tokyo, MIT
 licence): a model that regenerates the voice from scratch starting from the recorded one. Because it
 is a resynthesis, the result is close to the original but not identical: always listen to the
@@ -74,6 +76,8 @@ You can also drop a file onto `VoxClarity.vbs` to open it preselected, or use th
 ```
 
 ## Usage
+
+![VoxClarity: input, settings and outputs](docs/screenshots/main-en.png)
 
 1. **Input:** drop one or more audio/video files on the dashed box (or click to choose), or pick the
    microphone and press **Record**. Files dropped into the window are limited to 4 GB each; for

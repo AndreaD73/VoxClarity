@@ -6,6 +6,8 @@ Porta una registrazione fatta con un microfono economico a un suono da studio, u
 artificiale sulla scheda video del tuo computer. Trascini un file audio o video (oppure registri dal
 microfono), premi **Elabora**, ascolti l'originale e il risultato uno accanto all'altro.
 
+![VoxClarity: finestra principale](docs/screenshots/main-it.png)
+
 Il motore e' [Sidon](https://github.com/sarulab-speech/Sidon) (Sarulab, Universita' di Tokyo, licenza MIT):
 un modello che rigenera la voce da zero a partire da quella registrata. Essendo una risintesi, il
 risultato e' vicino all'originale ma non identico: ascolta sempre il confronto prima di usarlo.
@@ -73,6 +75,8 @@ Puoi anche trascinare un file sopra `VoxClarity.vbs` per aprirlo gia' selezionat
 ```
 
 ## Uso
+
+![VoxClarity: ingresso, parametri e uscite](docs/screenshots/main-it.png)
 
 1. **Ingresso:** trascina uno o piu' file audio/video nel riquadro tratteggiato (o clicca per scegliere),
    oppure scegli il microfono e premi **Registra**. I file trascinati nella finestra sono limitati a
