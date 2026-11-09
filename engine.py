@@ -19,7 +19,7 @@ import torch
 import torchaudio
 from scipy.signal import fftconvolve, firwin2
 
-VERSION = "0.4.3"
+VERSION = "0.4.4"
 REPO_URL = "https://github.com/AndreaD73/VoxClarity"
 CHUNK_S = 30
 SR = 48000

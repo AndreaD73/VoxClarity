@@ -115,7 +115,7 @@ button.danger{background:var(--bad);border-color:var(--bad);color:#fff}
     <div class="card">
       <div class="allrow" style="margin-top:0;margin-bottom:5px"><label data-i="s2"></label><button id="bReset" data-i="reset" data-t="resetTip"></button></div>
       <div class="set">
-        <select id="setSel"><option value="" data-i="setPlaceholder"></option></select>
+        <select id="setSel"><option value="" data-i="setDefault"></option></select>
         <button id="bLoad" data-i="load" data-t="loadTip"></button>
         <button id="bSave" data-i="save" data-t="saveTip"></button>
         <button id="bDel" data-t="delSetTip"></button>
@@ -186,7 +186,7 @@ it:{
  s1:"1. Ingresso",s2:"2. Parametri",run:"3. Elabora",dropText:"Trascina uno o più file audio o video, o clicca",dropTip:"Trascina qui uno o più file, o clicca per sceglierli",
  micDefault:"Microfono predefinito",micHint:"(premi Registra una volta per vedere tutti i microfoni)",mic:"Microfono",rec:"Registra",stop:"Ferma",stopTip:"Ferma la coda dopo il file in corso",recording:"Sto registrando: ",
  noInputs:"Nessun ingresso: carica un file o registra",selCount:"Selezionati: {n} di {m}",selAll:"Seleziona tutti",selNone:"Nessuno",allTip:"Seleziona o deseleziona tutti gli ingressi",
- setPlaceholder:"Settaggi salvati...",load:"Carica",save:"Salva",del:"Cancella",cancel:"Annulla",confirm:"Conferma",
+ setDefault:"Predefinito",factoryDone:"Impostazioni di fabbrica ripristinate",load:"Carica",save:"Salva",del:"Cancella",cancel:"Annulla",confirm:"Conferma",
  loadTip:"Applica il settaggio scelto",saveTip:"Salva i parametri attuali con un nome",delSetTip:"Cancella il settaggio scelto",setNamePh:"Nome del settaggio",
  sound:"Suono",volume:"Volume finale",volumeTip:"Porta il volume del file allo standard scelto, così non esce troppo basso o troppo alto",
  p_warm_pro:"Caldo pro",p_studio:"Studio caldo",p_natural:"Naturale",p_podcast:"Podcast",p_radio:"Radio",
@@ -196,7 +196,7 @@ it:{
  outputsOf:"Uscite di {name}",outputs:"Uscite",noOutputs:"Ancora nessuna uscita: premi Elabora",pickInput:"Scegli un ingresso e premi Elabora",
  changeFolder:"Cambia cartella",changeFolderTip:"Scegli la cartella dove vengono salvate le uscite",outDirTip:"Cartella delle uscite: {p}",
  outDel:"Cancella",outDelTip:"Sposta l'uscita scelta nel cestino",
- listen:"Ascolto:",noOut:"nessuna uscita scelta",orig:"Originale",studio:"Studio",play:"Ascolta",reset:"Ripristina",resetTip:"Riporta i cinque cursori ai valori di partenza (50)",
+ listen:"Ascolto:",noOut:"nessuna uscita scelta",orig:"Originale",studio:"Studio",play:"Ascolta",reset:"Ripristina",resetTip:"Rimette le impostazioni di fabbrica",
  tip_warmth:"Corpo della voce (bassi, 200 Hz). 50 = come il suono scelto; 0 = -5 dB, 100 = +5 dB",
  tip_presence:"Chiarezza e vicinanza (3,5 kHz). 0 = -5 dB, 100 = +5 dB",
  tip_air:"Brillantezza (12 kHz). 0 = -6 dB, 100 = +6 dB",
@@ -227,7 +227,7 @@ en:{
  s1:"1. Input",s2:"2. Settings",run:"3. Process",dropText:"Drop one or more audio or video files, or click",dropTip:"Drop one or more files here, or click to choose them",
  micDefault:"Default microphone",micHint:"(press Record once to see all microphones)",mic:"Microphone",rec:"Record",stop:"Stop",stopTip:"Stop the queue after the current file",recording:"Recording: ",
  noInputs:"No inputs: load a file or record",selCount:"Selected: {n} of {m}",selAll:"Select all",selNone:"None",allTip:"Select or deselect all inputs",
- setPlaceholder:"Saved settings...",load:"Load",save:"Save",del:"Delete",cancel:"Cancel",confirm:"Confirm",
+ setDefault:"Default",factoryDone:"Factory settings restored",load:"Load",save:"Save",del:"Delete",cancel:"Cancel",confirm:"Confirm",
  loadTip:"Apply the chosen setting",saveTip:"Save the current parameters under a name",delSetTip:"Delete the chosen setting",setNamePh:"Setting name",
  sound:"Sound",volume:"Final volume",volumeTip:"Brings the file volume to the chosen standard, so it is neither too quiet nor too loud",
  p_warm_pro:"Warm pro",p_studio:"Warm studio",p_natural:"Natural",p_podcast:"Podcast",p_radio:"Radio",
@@ -237,7 +237,7 @@ en:{
  outputsOf:"Outputs of {name}",outputs:"Outputs",noOutputs:"No outputs yet: press Process",pickInput:"Choose an input and press Process",
  changeFolder:"Change folder",changeFolderTip:"Choose the folder where outputs are saved",outDirTip:"Output folder: {p}",
  outDel:"Delete",outDelTip:"Move the chosen output to the Recycle Bin",
- listen:"Listening:",noOut:"no output chosen",orig:"Original",studio:"Studio",play:"Listen",reset:"Reset",resetTip:"Put the five sliders back to their starting values (50)",
+ listen:"Listening:",noOut:"no output chosen",orig:"Original",studio:"Studio",play:"Listen",reset:"Reset",resetTip:"Restore factory settings",
  tip_warmth:"Body of the voice (lows, 200 Hz). 50 = as the chosen sound; 0 = -5 dB, 100 = +5 dB",
  tip_presence:"Clarity and closeness (3.5 kHz). 0 = -5 dB, 100 = +5 dB",
  tip_air:"Brightness (12 kHz). 0 = -6 dB, 100 = +6 dB",
@@ -278,7 +278,7 @@ function updRun(){const n=[...checked].filter(p=>ins.some(i=>i.path==p)).length;
 function setBusy(b){busy=b;if(!b)queueRun=false;$("bRec").disabled=b;updRun()}
 // Config remembered between sessions (language, folder, sound, volume, sliders, microphone, setting, input).
 let saveT=null;
-const cfgBody=()=>({lang:LANG,preset:$("preset").value,target:$("target").value,params:params(),mic:wantMic,setName:loadedSet,input:file});
+const cfgBody=()=>({lang:LANG,preset:$("preset").value,target:$("target").value,params:params(),mic:wantMic,setName:loadedSet,work:WORK,input:file});
 function saveCfg(){clearTimeout(saveT);saveT=setTimeout(()=>post("/api/config",cfgBody()).catch(()=>{}),500)}
 function flushCfg(){clearTimeout(saveT);fetch("/api/config",{method:"POST",body:JSON.stringify(cfgBody()),keepalive:true}).catch(()=>{})}
 addEventListener("pagehide",flushCfg);
@@ -344,7 +344,7 @@ function applyLang(){
   $("playing").textContent=selOut?selOut.name:t("noOut");$("bLog").title="";
   const m=$("mic").options[0];if(m)m.textContent=t("micDefault");
   showDir();updOutTitle();updSel();listMics();updPlay();
-  [...$("setSel").options].forEach((o,k)=>{if(!k)o.textContent=t("setPlaceholder")});
+  [...$("setSel").options].forEach((o,k)=>{if(!k)o.textContent=t("setDefault")});
 }
 $("lang").onchange=async()=>{LANG=$("lang").value;await post("/api/config",{lang:LANG});applyLang();status(t("ready"));await refreshInputs();await refreshOutputs()};
 async function init(){
@@ -353,15 +353,18 @@ async function init(){
   $("ver").textContent="v"+i.version;REPO=i.repo;document.title="VoxClarity "+i.version;
   PRESETS=i.presets;TARGETS=i.targets;DEF=i.defaults;
   $("sliders").innerHTML=SLK.map(k=>`<div class="sl"><span id="sl_${k}"></span><input type="range" id="s_${k}" min="0" max="100" value="${DEF[k]}"><output id="o_${k}">${DEF[k]}</output></div>`).join("");
-  for(const k of SLK)$("s_"+k).oninput=e=>{$("o_"+k).textContent=e.target.value;saveCfg()};
+  for(const k of SLK)$("s_"+k).oninput=e=>{$("o_"+k).textContent=e.target.value;userChanged()};
   optsFill($("preset"),PRESETS,"p_");optsFill($("target"),TARGETS,"v_");
   if(PRESETS.includes(cfg.preset))$("preset").value=cfg.preset;
   $("target").value=TARGETS.includes(cfg.target)?cfg.target:"youtube";
   for(const k of SLK){const v=cfg.params&&cfg.params[k];if(typeof v=="number"){$("s_"+k).value=v;$("o_"+k).textContent=v}}
-  $("preset").onchange=$("target").onchange=saveCfg;
-  $("bReset").onclick=()=>{for(const k of SLK){$("s_"+k).value=DEF[k];$("o_"+k).textContent=DEF[k]}saveCfg()};
+  $("preset").onchange=$("target").onchange=userChanged;
+  // Reset = factory settings (first sound, first volume target, default sliders); they become the new Predefinito.
+  $("bReset").onclick=()=>{applyData({preset:PRESETS[0],target:TARGETS[0],params:DEF});userChanged();status(t("factoryDone"),"ok")};
   wantMic=cfg.mic||"";
   await refreshInputs();await refreshSets(cfg.setName);if(SETS[cfg.setName])loadedSet=cfg.setName;
+  WORK=cfg.work&&cfg.work.params?cfg.work:curData();
+  if(!activeSet()){loadedSet="";$("setSel").value=""}updDel();
   applyLang();
   status(t("ready"));
   const start=i.preselect||(ins.some(x=>x.path==cfg.input)?cfg.input:"");
@@ -384,26 +387,32 @@ function outTag(){const s=activeSet();if(s)return s;
   return [$("preset").options[$("preset").selectedIndex].text,t("vt_"+$("target").value)]
     .concat(ch?[SLK.map(k=>t("sl_"+k).slice(0,2)+p[k]).join("")]:[]).join("_")}
 // Saved settings: stored by the app (AppData), chosen from the list; the output name carries the setting name.
-let SETS={},loadedSet="";
+// "Predefinito" = the working parameters (WORK, persisted in config); named settings never overwrite it.
+let SETS={},loadedSet="",WORK=null;
 const curData=()=>({preset:$("preset").value,target:$("target").value,params:params()});
 const activeSet=()=>loadedSet&&SETS[loadedSet]&&JSON.stringify(SETS[loadedSet])==JSON.stringify(curData())?loadedSet:"";
 function fillSets(d,sel){SETS=d;const s=$("setSel");s.length=1;for(const n of Object.keys(d).sort())s.add(new Option(n,n));s.value=sel&&d[sel]?sel:""}
 async function refreshSets(sel){fillSets((await (await fetch("/api/settings")).json()).settings,sel)}
-function applySet(n){const d=SETS[n];if(!d)return;$("preset").value=d.preset;$("target").value=d.target;
-  for(const k of SLK){$("s_"+k).value=d.params[k];$("o_"+k).textContent=d.params[k]}loadedSet=n;saveCfg();status(t("setLoaded",{name:n}),"ok")}
-$("bLoad").onclick=()=>{const n=$("setSel").value;if(!n)return status(t("pickSet"),"err");applySet(n)};
+function applyData(d){$("preset").value=d.preset;$("target").value=d.target;
+  for(const k of SLK){const v=d.params[k]??DEF[k];$("s_"+k).value=v;$("o_"+k).textContent=v}}
+function updDel(){$("bDel").disabled=!$("setSel").value}
+function userChanged(){loadedSet="";WORK=curData();$("setSel").value="";updDel();saveCfg()}
+function applyDefault(){if(!WORK)return;applyData(WORK);loadedSet="";$("setSel").value="";updDel();saveCfg();status(t("setLoaded",{name:t("setDefault")}),"ok")}
+function applySet(n){const d=SETS[n];if(!d)return;applyData(d);loadedSet=n;saveCfg();status(t("setLoaded",{name:n}),"ok")}
+$("bLoad").onclick=()=>{const n=$("setSel").value;if(!n)return applyDefault();applySet(n)};
+$("setSel").onchange=()=>{if(!$("setSel").value)applyDefault();updDel()};
 $("setSel").ondblclick=()=>$("bLoad").onclick();
 $("bSave").onclick=()=>{$("saveRow").classList.remove("hide");$("setName").value=$("setSel").value||loadedSet||"";$("setName").focus()};
 $("bSaveNo").onclick=()=>$("saveRow").classList.add("hide");
 $("bSaveOk").onclick=async()=>{const n=$("setName").value.trim();if(!n)return status(t("writeName"),"err");
-  const r=await post("/api/settings/save",{name:n,data:curData()});fillSets(r.settings,n);loadedSet=n;saveCfg();$("saveRow").classList.add("hide");status(t("setSaved",{name:n}),"ok")};
+  const r=await post("/api/settings/save",{name:n,data:curData()});fillSets(r.settings,n);loadedSet=n;updDel();saveCfg();$("saveRow").classList.add("hide");status(t("setSaved",{name:n}),"ok")};
 $("setName").onkeydown=e=>{if(e.key=="Enter")$("bSaveOk").onclick();if(e.key=="Escape")$("bSaveNo").onclick()};
 let delArm="";
 $("bDel").onclick=async()=>{const n=$("setSel").value;if(!n)return status(t("pickSetDel"),"err");
   if(delArm!=n){delArm=n;$("bDel").classList.add("danger");$("bDel").textContent=t("confirm");status(t("confirmSet",{name:n}));
     setTimeout(()=>{delArm="";$("bDel").classList.remove("danger");$("bDel").textContent=t("del")},4000);return}
   const r=await post("/api/settings/delete",{name:n});delArm="";$("bDel").classList.remove("danger");$("bDel").textContent=t("del");
-  if(loadedSet==n){loadedSet="";saveCfg()}fillSets(r.settings);status(t("setDeleted",{name:n}),"ok")};
+  if(loadedSet==n){loadedSet="";WORK=curData();saveCfg()}fillSets(r.settings);updDel();status(t("setDeleted",{name:n}),"ok")};
 // Add files (picked or dropped): all go into the list and get checked; the first becomes current.
 async function addPaths(paths){if(!paths.length)return;paths.forEach(p=>checked.add(p));
   await selectInput(paths[0]);if(paths.length>1)status(t("added",{n:paths.length}),"ok")}

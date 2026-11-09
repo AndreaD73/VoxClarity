@@ -120,7 +120,7 @@ DEFAULT_PORT = 47811          # fixed default so the browser origin (and its mic
 MAX_UPLOAD = 4 * 2**30        # largest accepted upload (drag and drop / recording), in bytes
 BROWSER_PROFILE = Path(os.environ.get("LOCALAPPDATA") or HOME / "AppData" / "Local") / "VoxClarity" / "browser"
 CONFIG_FILE = APPDATA_DIR / "config.json"
-CONFIG_KEYS = {"winH", "lang", "outdir", "preset", "target", "params", "mic", "setName", "input"}
+CONFIG_KEYS = {"winH", "lang", "outdir", "preset", "target", "params", "mic", "setName", "work", "input"}
 
 
 def default_lang():

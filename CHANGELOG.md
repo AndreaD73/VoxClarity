@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.4 - "Default" entry and factory reset
+
+- The saved-settings list now starts with "Default" (Predefinito): the current working parameters (sound, final
+  volume, sliders), kept automatically. Choosing it brings back the last working parameters after loading a named
+  setting. It cannot be deleted.
+- "Reset" now restores the factory settings (first sound, YouTube volume, sliders at 50); the result becomes the new Default.
+
 ## 0.4.3 - Renamed to VoxClarity
 
 - The product is now called VoxClarity (previous name withdrawn). Settings and logs now live in `%APPDATA%\VoxClarity`,
