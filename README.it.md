@@ -2,6 +2,8 @@
 
 [English](README.md)
 
+▶️ **Guardalo:** [video di 2 minuti](https://youtu.be/BwmlRZjnTQw) · [short di 50 secondi](https://youtube.com/shorts/nGBDjYjZnsw)
+
 Porta una registrazione fatta con un microfono economico a un suono da studio, usando l'intelligenza
 artificiale sulla scheda video del tuo computer. Trascini un file audio o video (oppure registri dal
 microfono), premi **Elabora**, ascolti l'originale e il risultato uno accanto all'altro.
