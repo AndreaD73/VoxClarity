@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-▶️ **Guardalo:** [video di 2 minuti](https://youtu.be/BwmlRZjnTQw) · [short di 50 secondi](https://youtube.com/shorts/nGBDjYjZnsw)
+▶️ **Guardalo:** [video di 2 minuti](https://youtu.be/E9GVNDqAkUU) · [short di 50 secondi](https://youtube.com/shorts/vi5UU1eA4lk)
 
 Porta una registrazione fatta con un microfono economico a un suono da studio, usando l'intelligenza
 artificiale sulla scheda video del tuo computer. Trascini un file audio o video (oppure registri dal
