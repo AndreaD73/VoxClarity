@@ -2,7 +2,7 @@
 
 [Italiano](README.it.md)
 
-▶️ **Watch it:** [2-minute video](https://youtu.be/2OqR8GS0eqo) · [50-second short](https://youtube.com/shorts/26MZb4qf_l0)
+▶️ **Watch it:** [2-minute video](https://youtu.be/4zdbRpyoqhY) · [50-second short](https://youtube.com/shorts/yLW7o248tyQ)
 
 Turns a recording made with a cheap microphone into a studio-sounding one, using AI on your
 computer's graphics card. Drag in an audio or video file (or record from the microphone), press
